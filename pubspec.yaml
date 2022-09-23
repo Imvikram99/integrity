@@ -52,6 +52,10 @@ dependencies:
   flutter_typeahead: ^4.0.0
   get_storage: ^2.0.3
   country_state_city_picker: ^1.2.8
+  cashfree_pg: ^2.0.12+32
+  http: ^0.13.5
+  firebase_remote_config: ^2.0.17
+  firebase_analytics: ^9.3.6
 
   
 

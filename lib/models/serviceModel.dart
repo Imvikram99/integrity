@@ -19,11 +19,12 @@ class ServiceModel{
   late String telegram;
   late String zoom;
   late String webAddress;
+  List<CustomFields>? customFileds;
 
   ServiceModel(this.userId,this.name,this.categoryName,this.description,
       this.availabilityStartTime,this.availabilityEndTime,
       this.availabilityStartDate,this.availabilityEndDate,this.country,this.state,this.city,this.pinCode,this.latitude,this.longitude,
-      this.email,this.upiLink,this.watsApp,this.telegram,this.zoom,this.webAddress);
+      this.email,this.upiLink,this.watsApp,this.telegram,this.zoom,this.webAddress,this.customFileds);
 
   ServiceModel.fromJson(Map<String,dynamic> json){
     userId=json['userId'].toString();
@@ -46,6 +47,7 @@ class ServiceModel{
     telegram=json['telegram'].toString();
     zoom=json['zoom'].toString();
     webAddress=json['webLink'].toString();
+    customFileds=_convertValues(json['customData']);
   }
 
   Map<String, dynamic> toJson() {
@@ -70,8 +72,48 @@ class ServiceModel{
     data['telegram'] = this.telegram;
     data['zoom'] = this.zoom;
     data['webLink'] = this.webAddress;
+    data['customData']=_valuesList(customFileds);
 
     return data;
   }
 
+}
+
+class CustomFields{
+  String? title;
+  String? value;
+
+  CustomFields(this.title,this.value);
+
+  CustomFields.fromJson(Map<String,dynamic> json){
+    title=json['title'].toString();
+    value=json['value'].toString();
+  }
+
+  Map<String,dynamic> toJson(){
+    Map<String,dynamic> data=Map<String,dynamic>();
+    data['title']=title;
+    data['value']=value;
+    return data;
+  }
+
+}
+_convertValues(List<dynamic> json) {
+  final c = <CustomFields>[];
+
+  for (final challenge in json) {
+    c.add(CustomFields.fromJson(challenge as Map<String, dynamic>));
+  }
+  return c;
+}
+
+List<Map<String, dynamic>>? _valuesList(List<CustomFields>? challenges) {
+  if (challenges == null) {
+    return null;
+  }
+  final challengesMap = <Map<String, dynamic>>[];
+  challenges.forEach((challenge) {
+    challengesMap.add(challenge.toJson());
+  });
+  return challengesMap;
 }

@@ -14,14 +14,20 @@ class ServiceController extends GetxController{
     super.onInit();
   }
 
-  saveService(ServiceModel service)
+saveService(ServiceModel service)
   {
+    print('inside service');
+
     firestore.collection('services').add(service.toJson()).
     then((value) => {
-      Get.snackbar('','Service Saved Successfully',snackPosition: SnackPosition.BOTTOM,backgroundColor: Colors.black,colorText: Colors.white),
+      print(value.id),
+
+     // Get.snackbar('','Service Saved Successfully',snackPosition: SnackPosition.BOTTOM,backgroundColor: Colors.black,colorText: Colors.white),
     }).
     catchError((error) => {
-      Get.snackbar('Error',error,snackPosition: SnackPosition.BOTTOM)
-    });;
+
+      Get.snackbar('Error',error.toString(),snackPosition: SnackPosition.BOTTOM)
+    });
+
   }
 }

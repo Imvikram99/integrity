@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_state_city_picker/country_state_city_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:integrity/controllers/serviceController.dart';
 import 'package:integrity/models/serviceModel.dart';
-import 'package:intl/intl.dart';
+import 'package:integrity/views/paymentPage.dart';
 
 class CreateService extends StatefulWidget {
   final String category;
@@ -38,12 +36,21 @@ class _CreateServiceState extends State<CreateService> {
   TextEditingController startTimeController=TextEditingController();
   TextEditingController endTimeController=TextEditingController();
 
+  TextEditingController cf1Controller=TextEditingController();
+  TextEditingController cf2Controller=TextEditingController();
+  TextEditingController cf3Controller=TextEditingController();
+  String? cf1Title;
+  String? cf2Title;
+  String? cf3Title;
+  List<CustomFields> customFileds=[];
+
   bool saving=false;
   double lat=0,long=0;
   double fromTime=0,toTime=0;
   late String countryValue;
   late String stateValue;
   late String cityValue;
+  late String userPhone;
   List<String> days=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 
   List<String> searchSuggestion(String query)=>
@@ -117,6 +124,7 @@ class _CreateServiceState extends State<CreateService> {
 
  addService()
  {
+   print('inside service add');
    if (!_formKey.currentState!.validate()) {
      setState(() {
        saving = false;
@@ -128,14 +136,90 @@ class _CreateServiceState extends State<CreateService> {
            startTimeController.text, endTimeController.text, startDayController.text, endDayController.text,
        countryValue,stateValue,cityValue,pinCodeController.text,lat.toString(),long.toString(),emailController.text,
            upiController.text,watsAppController.text
-       ,telegramController.text,zoomLinkController.text,webLinkController.text);
+       ,telegramController.text,zoomLinkController.text,webLinkController.text,customFileds);
        ServiceController controller=Get.put(ServiceController());
        controller.saveService(model);
        saving=false;
-       Get.back();
+        Get.back();
+        Get.to(()=>PaymentPlan(),arguments: [{'s':model,'ph':userPhone}]);
      }
  }
 
+ addCustomField(){
+   final _cformKey = GlobalKey<FormState>();
+   TextEditingController controller1=TextEditingController();
+   TextEditingController controller2=TextEditingController();
+   Get.defaultDialog(
+     title: 'Add filed',
+     titleStyle: TextStyle(fontStyle: FontStyle.italic),
+     content: Form(
+         key: _cformKey,
+         child: Column(
+           children: [
+             TextFormField(
+               controller: controller1,
+               decoration: InputDecoration(
+                 border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+                 hintText: 'field title',
+               ),
+               validator: (value){
+                 if(value!.isEmpty)
+                 {
+                   return 'please enter a title';
+                 }
+                 return null;
+               },
+             ),
+             SizedBox(height: 10,),
+             TextFormField(
+               controller: controller2,
+               decoration: InputDecoration(
+                 border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
+                 hintText: 'field value',
+               ),
+               validator: (value){
+                 if(value!.isEmpty)
+                 {
+                   return 'please enter a value';
+                 }
+                 return null;
+               },
+             ),
+             TextButton(
+               onPressed: (){
+                 if(_cformKey.currentState!.validate())
+                   setState((){
+                     if(cf1Controller.text.isEmpty)
+                       {
+                         cf1Title=controller1.text;
+                         cf1Controller.text=controller2.text;
+                         CustomFields fields=CustomFields(cf1Title,cf1Controller.text);
+                         customFileds.add(fields);
+                       }
+                     else if(cf2Controller.text.isEmpty)
+                       {
+                         cf2Title=controller1.text;
+                         cf2Controller.text=controller2.text;
+                         CustomFields fields=CustomFields(cf2Title,cf2Controller.text);
+                         customFileds.add(fields);
+                       }
+                     else
+                       {
+                         cf3Title=controller1.text;
+                         cf3Controller.text=controller2.text;
+                         CustomFields fields=CustomFields(cf3Title,cf3Controller.text);
+                         customFileds.add(fields);
+                       }
+                   });
+                 Get.back();
+               },
+               child: Text('Add',style: TextStyle(color: Colors.white),),
+               style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue)),
+             ),
+           ],
+         ))
+   );
+ }
 
  @override
   void initState() {
@@ -148,7 +232,7 @@ class _CreateServiceState extends State<CreateService> {
         {
           for(var data in value.docs)
             {
-              countryValue=data.data()['userCountry'],
+              userPhone=data.data()['phone'],
             }
         });
       }
@@ -468,7 +552,6 @@ class _CreateServiceState extends State<CreateService> {
                          ),
                        ),
                        SizedBox(height: 20,),
-
                        SelectState(
                          onCountryChanged: (value) {
                            setState(() {
@@ -487,7 +570,6 @@ class _CreateServiceState extends State<CreateService> {
                          },
 
                        ),
-
                        SizedBox(height: 20,),
                        TextFormField(
                          controller:pinCodeController ,
@@ -668,6 +750,111 @@ class _CreateServiceState extends State<CreateService> {
 
                          },
                        ),
+                       SizedBox(height: 20,),
+                       cf1Controller.text.isNotEmpty?
+                       Container(
+                         child: Column(
+                           children: [
+                             TextFormField(
+                               controller:cf1Controller ,
+                               style:  TextStyle(
+                                   color: Colors.black87, fontSize: 16),
+                               decoration: InputDecoration(
+                                   enabledBorder: new OutlineInputBorder(
+                                     borderRadius: new BorderRadius.circular(15.0),
+                                     borderSide:  BorderSide(color:  Colors.grey.shade200 ),
+
+                                   ),
+                                   focusedBorder: new OutlineInputBorder(
+                                     borderRadius: new BorderRadius.circular(15.0),
+                                     borderSide:  BorderSide(color:  Colors.cyan.shade700 ),
+
+                                   ),
+                                   filled: true,
+                                   hintStyle: TextStyle(color: Colors.grey.shade500,fontSize: 14),
+                                   hintText: "Type your web address",
+                                   fillColor: Colors.grey.shade200),
+                               readOnly: true,
+                             ),
+                             SizedBox(height: 15,)
+                           ],
+                         ),
+                       ) :Container(),
+                       cf2Controller.text.isNotEmpty?
+                       Container(
+                         child: Column(
+                           children: [
+                             TextFormField(
+                               controller:cf2Controller ,
+                               style:  TextStyle(
+                                   color: Colors.black87, fontSize: 16),
+                               decoration: InputDecoration(
+                                   enabledBorder: new OutlineInputBorder(
+                                     borderRadius: new BorderRadius.circular(15.0),
+                                     borderSide:  BorderSide(color:  Colors.grey.shade200 ),
+
+                                   ),
+                                   focusedBorder: new OutlineInputBorder(
+                                     borderRadius: new BorderRadius.circular(15.0),
+                                     borderSide:  BorderSide(color:  Colors.cyan.shade700 ),
+
+                                   ),
+                                   filled: true,
+                                   hintStyle: TextStyle(color: Colors.grey.shade500,fontSize: 14),
+                                   hintText: "Type your web address",
+                                   fillColor: Colors.grey.shade200),
+                               readOnly: true,
+                             ),
+                             SizedBox(height: 15,)
+                           ],
+                         ),
+                       ) :Container(),
+                       cf3Controller.text.isNotEmpty?
+                       Container(
+                         child: Column(
+                           children: [
+                             TextFormField(
+                               controller:cf3Controller ,
+                               style:  TextStyle(
+                                   color: Colors.black87, fontSize: 16),
+                               decoration: InputDecoration(
+                                   enabledBorder: new OutlineInputBorder(
+                                     borderRadius: new BorderRadius.circular(15.0),
+                                     borderSide:  BorderSide(color:  Colors.grey.shade200 ),
+
+                                   ),
+                                   focusedBorder: new OutlineInputBorder(
+                                     borderRadius: new BorderRadius.circular(15.0),
+                                     borderSide:  BorderSide(color:  Colors.cyan.shade700 ),
+
+                                   ),
+                                   filled: true,
+                                   hintStyle: TextStyle(color: Colors.grey.shade500,fontSize: 14),
+                                   hintText: "Type your web address",
+                                   fillColor: Colors.grey.shade200),
+                               readOnly: true,
+                             ),
+                             SizedBox(height: 15,)
+                           ],
+                         ),
+                       ) :Container(),
+                       cf3Controller.text.isEmpty?
+                       TextButton(onPressed: (){
+                         setState((){
+                          addCustomField();
+                         });
+                       },
+                       style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue),
+                               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                   RoundedRectangleBorder(
+                                       borderRadius: BorderRadius.circular(15.0),
+                                       side: BorderSide(color: Colors.blue)
+                                   )
+                               ),
+                               padding: MaterialStateProperty.all(EdgeInsets.only(top: 15,bottom: 15,left: 20,right: 20))
+                           ),
+                           child: Text('Add Custom Fields',style: TextStyle(color: Colors.white),)
+                       ):Container(),
                        SizedBox(height: 20,),
                        saving?Padding(padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                            child:Center(child: CircularProgressIndicator(),)):
