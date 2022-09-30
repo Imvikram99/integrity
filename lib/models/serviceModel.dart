@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class ServiceModel{
   late String userId;
   late String name;
   late String categoryName;
+  late String status;
   late String description;
   late String availabilityStartTime;
   late String availabilityEndTime;
@@ -21,7 +24,7 @@ class ServiceModel{
   late String webAddress;
   List<CustomFields>? customFileds;
 
-  ServiceModel(this.userId,this.name,this.categoryName,this.description,
+  ServiceModel(this.userId,this.name,this.categoryName,this.status,this.description,
       this.availabilityStartTime,this.availabilityEndTime,
       this.availabilityStartDate,this.availabilityEndDate,this.country,this.state,this.city,this.pinCode,this.latitude,this.longitude,
       this.email,this.upiLink,this.watsApp,this.telegram,this.zoom,this.webAddress,this.customFileds);
@@ -30,6 +33,7 @@ class ServiceModel{
     userId=json['userId'].toString();
     name=json['name'].toString();
     categoryName=json['category'].toString();
+    status=json['status'].toString();
     description=json['desc'].toString();
     availabilityStartTime=json['startTime'].toString();
     availabilityEndTime=json['endTime'].toString();
@@ -55,6 +59,7 @@ class ServiceModel{
     data['userId']=this.userId;
     data['name'] = this.name;
     data['category'] = this.categoryName;
+    data['status'] = this.status;
     data['desc'] = this.description;
     data['startTime'] = this.availabilityStartTime;
     data['endTime'] = this.availabilityEndTime;
@@ -75,6 +80,32 @@ class ServiceModel{
     data['customData']=_valuesList(customFileds);
 
     return data;
+  }
+
+  ServiceModel.fromDocumentSnapshot({required DocumentSnapshot documentSnapshot}) {
+  //  documentId = documentSnapshot.id;
+    userId=documentSnapshot['userId'].toString();
+    name=documentSnapshot['name'].toString();
+    categoryName=documentSnapshot['category'].toString();
+   // status=documentSnapshot['status'].toString();
+    description=documentSnapshot['desc'].toString();
+    availabilityStartTime=documentSnapshot['startTime'].toString();
+    availabilityEndTime=documentSnapshot['endTime'].toString();
+    availabilityStartDate=documentSnapshot['startDate'].toString();
+    availabilityEndDate=documentSnapshot['endDate'].toString();
+    country=documentSnapshot['country'].toString();
+    country=documentSnapshot['state'].toString();
+    city=documentSnapshot['city'].toString();
+    pinCode=documentSnapshot['pinCode'].toString();
+    latitude=documentSnapshot['latitude'].toString();
+    longitude=documentSnapshot['longitude'].toString();
+    email=documentSnapshot['email'].toString();
+    upiLink=documentSnapshot['upiLink'].toString();
+    watsApp=documentSnapshot['watsApp'].toString();
+    telegram=documentSnapshot['telegram'].toString();
+    zoom=documentSnapshot['zoom'].toString();
+    webAddress=documentSnapshot['webLink'].toString();
+    customFileds=_convertValues(documentSnapshot['customData']);
   }
 
 }

@@ -1,15 +1,15 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:cashfree_pg/cashfree_pg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
 import 'package:integrity/constants.dart';
 import 'package:http/http.dart' as http;
+import 'package:integrity/controllers/serviceController.dart';
 import 'package:integrity/models/serviceModel.dart';
-import 'package:intl/intl.dart';
 
 class PaymentPlan extends StatefulWidget{
   @override
@@ -58,7 +58,7 @@ class PaymentPlanState extends State<PaymentPlan> {
             Container(
               width: screenWidth/1.25,
               height: screenHeight/8,
-              margin: EdgeInsets.only(top: screenHeight/6,left: screenWidth/10),
+              margin: EdgeInsets.only(top: screenHeight/8,left: screenWidth/10),
               decoration: (BoxDecoration(
                   border: Border.all(color:selected1?Constants.appTextColor:Colors.transparent,width: 2),
                   borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -109,15 +109,29 @@ class PaymentPlanState extends State<PaymentPlan> {
             ),
             Container(
               width: screenWidth/1.25,
-              height: screenHeight/16,
-              margin: EdgeInsets.only(top: screenHeight/3.5,left: screenWidth/10),
+              height: screenHeight/18,
+              margin: EdgeInsets.only(top: screenHeight/4,left: screenWidth/10),
               child:TextButton(onPressed: ()async {
                 final id = UniqueKey().hashCode;
                 String token=await generateToken(id.toString());
                 print(token);
-                makePayment(token,id.toString());
+                makeUpiPayment(token,id.toString());
               },
-                child: Text('Pay',style: TextStyle(color: Colors.white,fontSize: 16),),
+                child: Text('Pay Through UPI',style: TextStyle(color: Colors.white,fontSize: 16,fontStyle: FontStyle.italic),),
+                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue.shade400)),
+              ) ,
+            ),
+            Container(
+              width: screenWidth/1.25,
+              height: screenHeight/18,
+              margin: EdgeInsets.only(top: screenHeight/15,left: screenWidth/10),
+              child:TextButton(onPressed: ()async {
+                final id = UniqueKey().hashCode;
+                String token=await generateToken(id.toString());
+                print(token);
+                makeCardPayment(token,id.toString());
+              },
+                child: Text('Pay Through Bank',style: TextStyle(color: Colors.white,fontSize: 16),),
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue.shade400)),
               ) ,
             )
@@ -156,8 +170,8 @@ class PaymentPlanState extends State<PaymentPlan> {
     }
   }
 
-  // WEB Intent
-  makePayment(String token,String id) {
+
+  makeUpiPayment(String token,String id) {
     //Replace with actual values
 
     String orderId = id;
@@ -170,7 +184,7 @@ class PaymentPlanState extends State<PaymentPlan> {
     String appId = remoteConfig.getString('client_id');
     String customerPhone = userPhone;
     String customerEmail = serviceModel.email;
-    String notifyUrl = "https://test.gocashfree.com/notify";
+    String notifyUrl = "https://webhook.site/51b08dda-cca7-4979-844a-10f2e8b48d5b";
 
     Map<String, dynamic> inputParams = {
       "orderId": orderId,
@@ -189,7 +203,53 @@ class PaymentPlanState extends State<PaymentPlan> {
     CashfreePGSDK.doUPIPayment(inputParams)
         .then((value) => value?.forEach((key, value) {
           if(value=='SUCCESS')
+            {
+              var serviceController=Get.put(ServiceController());
+              serviceController.updateService(serviceModel.name, serviceModel.userId);
+            }
             Get.back();
+      print("key is $key : value is$value");
+      //Do something with the result
+    }));
+  }
+
+  makeCardPayment(String token,String id) {
+    //Replace with actual values
+
+    String orderId = id;
+    String stage = "TEST"; //PROD
+    String orderAmount = 100.toString();
+    String tokenData = token;
+    String customerName = serviceModel.userId;
+    String orderNote = serviceModel.name;
+    String orderCurrency = "INR";
+    String appId = remoteConfig.getString('client_id');
+    String customerPhone = userPhone;
+    String customerEmail = serviceModel.email;
+    String notifyUrl = "https://webhook.site/51b08dda-cca7-4979-844a-10f2e8b48d5b";
+
+    Map<String, dynamic> inputParams = {
+      "orderId": orderId,
+      "orderAmount": orderAmount,
+      "customerName": customerName,
+      "orderNote": orderNote,
+      "orderCurrency": orderCurrency,
+      "appId": appId,
+      "customerPhone": customerPhone,
+      "customerEmail": customerEmail,
+      "stage": stage,
+      "tokenData": tokenData,
+      "notifyUrl": notifyUrl
+    };
+
+    CashfreePGSDK.doPayment(inputParams)
+        .then((value) => value?.forEach((key, value) {
+      if(value=='SUCCESS')
+      {
+        var serviceController=Get.put(ServiceController());
+        serviceController.updateService(serviceModel.name, serviceModel.userId);
+      }
+      Get.back();
       print("key is $key : value is$value");
       //Do something with the result
     }));

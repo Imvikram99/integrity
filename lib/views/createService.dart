@@ -124,7 +124,6 @@ class _CreateServiceState extends State<CreateService> {
 
  addService()
  {
-   print('inside service add');
    if (!_formKey.currentState!.validate()) {
      setState(() {
        saving = false;
@@ -132,7 +131,7 @@ class _CreateServiceState extends State<CreateService> {
    }
    else
      {
-       ServiceModel model=ServiceModel(userId!,serviceNameController.text, widget.category, serviceDescriptionController.text,
+       ServiceModel model=ServiceModel(userId!,serviceNameController.text, widget.category,'draft', serviceDescriptionController.text,
            startTimeController.text, endTimeController.text, startDayController.text, endDayController.text,
        countryValue,stateValue,cityValue,pinCodeController.text,lat.toString(),long.toString(),emailController.text,
            upiController.text,watsAppController.text
