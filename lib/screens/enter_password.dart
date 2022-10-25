@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:fancy_password_field/fancy_password_field.dart';
 import 'package:flutter/material.dart';
-import 'package:integrity/screens/reviewer/Reviewer_pages/home_page.dart';
 // import 'package:integrity/screens/reviewer/success_register.dart';
 import 'package:integrity/screens/success_register.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';

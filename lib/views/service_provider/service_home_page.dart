@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:integrity/controllers/category_controller.dart';
 import 'package:integrity/controllers/serviceController.dart';
 import 'package:integrity/models/serviceModel.dart';
 import 'package:integrity/views/createService.dart';
 import 'package:integrity/views/service_provider/services_list.dart';
+
+import '../../screens/login_page.dart';
 
 class Provider_Home_Page extends StatefulWidget {
   Provider_Home_Page({Key? key}) : super(key: key);
@@ -21,6 +24,7 @@ class Provider__Home_PageState extends State<Provider_Home_Page> {
   var duplicateItems =<ServiceModel>[];
   var items = <ServiceModel>[];
   String q='';
+  final box = GetStorage();
 
   @override
   void initState() {
@@ -38,7 +42,13 @@ class Provider__Home_PageState extends State<Provider_Home_Page> {
               Row(
                 children: [
                   Expanded( flex: 6, child: Text('Categories',style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold,color: Colors.blueGrey.shade700),)),
-                  Expanded( flex: 1, child: Icon(Icons.person_outline)),
+                  Expanded( flex: 1,child:GestureDetector(
+                    child: Icon(Icons.person_outline),
+                    onTapDown: (TapDownDetails details){
+                      _showPopupMenu(
+                          context, details.globalPosition);
+                    },
+                  )),
                   Expanded( flex: 1,child: Icon(Icons.add_alert_outlined))
                 ],
               ),
@@ -191,4 +201,24 @@ class Provider__Home_PageState extends State<Provider_Home_Page> {
     }
   }
 
+  _showPopupMenu(BuildContext context, Offset offset) async{
+    double left = offset.dx;
+    double top = offset.dy+15;
+    await showMenu(
+        context: context,
+        position: RelativeRect.fromLTRB(left, top, 50, 0),
+        useRootNavigator: true,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12.0))),
+        items: [
+          PopupMenuItem<String>(
+            child: const Text('LogOut'),
+            onTap: () async{
+              box.erase();
+              await Future.delayed(const Duration(milliseconds: 10));
+              Get.offAll(()=>LogIn_page());
+            },),
+        ]
+    );
+  }
 }

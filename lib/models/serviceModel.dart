@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ServiceModel{
+  late String serviceId;
   late String userId;
   late String name;
   late String categoryName;
@@ -83,7 +84,7 @@ class ServiceModel{
   }
 
   ServiceModel.fromDocumentSnapshot({required DocumentSnapshot documentSnapshot}) {
-  //  documentId = documentSnapshot.id;
+    serviceId = documentSnapshot.id;
     userId=documentSnapshot['userId'].toString();
     name=documentSnapshot['name'].toString();
     categoryName=documentSnapshot['category'].toString();

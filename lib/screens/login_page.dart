@@ -6,8 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:integrity/screens/first_page.dart';
-import 'package:integrity/screens/reviewer/Reviewer_pages/home_page.dart';
 import 'package:integrity/screens/verify_otp.dart';
+import 'package:integrity/views/reviewer/reviewer_home_page.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 // import 'package:integrity/screens/reviewer/auth.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
@@ -69,7 +69,6 @@ class _LogIn_pageState extends State<LogIn_page> {
           .then((value) async { if(value.size > 0 )
           {
             for(var data in value.docs){
-              
               // print(PasswordController.text)  ;
               if(digest.toString()==data.data()['password']){
                 print('match');
