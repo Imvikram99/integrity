@@ -18,6 +18,8 @@ class ServiceController extends GetxController{
   Rx<List<Order>> ordersList = Rx<List<Order>>([]);
   List<Order> get orders => ordersList.value;
 
+  Rx<List<ServiceModel>> myServiceList = Rx<List<ServiceModel>>([]);
+  List<ServiceModel> get myServices => myServiceList.value;
   @override
   void onReady() {
 
@@ -26,8 +28,13 @@ class ServiceController extends GetxController{
   void onInit() {
     super.onInit();
     allServiceList.bindStream(allServiceStream());
+    
   }
 
+  getMyServices(String id){
+    myServiceList.bindStream(myServicesStream(id));
+  }
+  
   saveService(ServiceModel service)
   {
     print('inside service');
@@ -90,6 +97,19 @@ class ServiceController extends GetxController{
       return services;
     });
   }
+  Stream<List<ServiceModel>> myServicesStream(String id) {
+    return firestore
+        .collection('services').where('userId',isEqualTo: id)
+        .snapshots()
+        .map((QuerySnapshot query) {
+      List<ServiceModel> services = [];
+      for (var doc in query.docs) {
+        final service =ServiceModel.fromDocumentSnapshot(documentSnapshot: doc);
+        services.add(service);
+      }
+      return services;
+    });
+  }
 
   buyService(Order order,BuildContext context) async{
     Loader.show(context,
@@ -133,5 +153,12 @@ class ServiceController extends GetxController{
       }
       return services;
     });
+  }
+
+  updateOrderStatus(String serviceId,orderId,status){
+    firestore.collection('services').doc(serviceId).collection('orders').doc(orderId).update(
+        {
+          'status':status
+        });
   }
 }

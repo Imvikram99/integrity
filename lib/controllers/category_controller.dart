@@ -6,7 +6,7 @@ import '../models/category.dart';
 
 class CategoryController extends GetxController{
    FirebaseFirestore firestore=FirebaseFirestore.instance;
-  var categories=[].obs;
+  var categories=<Category>[].obs;
 
    @override
   void onInit() {

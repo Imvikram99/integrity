@@ -56,6 +56,12 @@ class ServiceDetailState extends State<ServiceDetail> {
             SizedBox(height: 6,),
             Text(serviceModel.description),
             SizedBox(height: 6,),
+            Text(serviceModel.categoryName),
+            SizedBox(height: 6,),
+            //Text(serviceModel.status),
+            SizedBox(height: 6,),
+            Text(serviceModel.upiLink),
+            SizedBox(height: 6,),
             Text(serviceModel.country),
             SizedBox(height: 6,),
             Text(serviceModel.webAddress),
@@ -101,17 +107,25 @@ class ServiceDetailState extends State<ServiceDetail> {
                             ),
                             SizedBox(height: 10,),
                             Text(
-                              model.status,
+                              model.userPhone,
                               style: TextStyle(
                                 fontSize: Get.textTheme.bodySmall!.fontSize,
                               ),
                             ),
                             SizedBox(height: 10,),
+                            Text(
+                              'order status: '+model.status,
+                              style: TextStyle(
+                                fontSize: Get.textTheme.bodySmall!.fontSize,
+                              ),
+                            ),
+                            SizedBox(height: 10,),
+                            /*model.status=='order placed'?
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: [
                                 TextButton(onPressed: (){
-
+                                  controller.updateOrderStatus(serviceModel.serviceId, model.orderId,'Rejected');
                                 },
                                     style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.red),
                                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -125,7 +139,7 @@ class ServiceDetailState extends State<ServiceDetail> {
                                     child: Text('Reject',style: TextStyle(color: Colors.white),)
                                 ),
                                 TextButton(onPressed: (){
-
+                                  controller.updateOrderStatus(serviceModel.serviceId, model.orderId,'Accepted');
                                 },
                                     style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green),
                                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -138,7 +152,8 @@ class ServiceDetailState extends State<ServiceDetail> {
                                     child: Text('Accept',style: TextStyle(color: Colors.white),)
                                 ),
                               ],
-                            )
+                            ):
+                            Container()*/
                           ],
                         ),
                       );

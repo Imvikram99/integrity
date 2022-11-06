@@ -6,30 +6,44 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:get/route_manager.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:integrity/constants.dart';
 import 'package:http/http.dart' as http;
 import 'package:integrity/controllers/serviceController.dart';
+import 'package:integrity/models/Order.dart';
 import 'package:integrity/models/serviceModel.dart';
 
-class PaymentPlan extends StatefulWidget{
+class BuyService extends StatefulWidget{
   @override
-  State<StatefulWidget> createState()=>PaymentPlanState();
+  State<StatefulWidget> createState()=>BuyServiceState();
 
 }
 
-class PaymentPlanState extends State<PaymentPlan> {
-  bool selected1=false,selected2=false;
-  dynamic argumentData = Get.arguments;
-  late ServiceModel serviceModel;
-  late String userPhone;
+class BuyServiceState extends State<BuyService> {
   FirebaseFirestore firestore=FirebaseFirestore.instance;
   final remoteConfig = FirebaseRemoteConfig.instance;
 
+  final box = GetStorage();
+  late String userId;
+  late ServiceModel serviceModel;
+  late String userPhone;
+
   @override
   void initState() {
-   serviceModel=argumentData[0]['s'];
-   userPhone=argumentData[0]['ph'];
-   getRemoteConfig();
+    serviceModel=Get.arguments;
+    if(box!=null)
+    {
+      userId= box.read('id');
+      FirebaseFirestore.instance.collection('users').where('userid',isEqualTo:userId).get().then((value) =>
+      {
+        for(var data in value.docs)
+          {
+            userPhone=data.data()['phone'],
+          }
+      });
+    }
+
+    getRemoteConfig();
     super.initState();
   }
   getRemoteConfig() async
@@ -47,7 +61,7 @@ class PaymentPlanState extends State<PaymentPlan> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.grey.shade50,
-        title: Text('Choose Plan',style: TextStyle(color: Constants.appTextColor,fontSize: 26,fontWeight: FontWeight.bold),),
+        title: Text('Buy Service',style: TextStyle(color: Constants.appTextColor,fontSize: 26,fontWeight: FontWeight.bold),),
         centerTitle: true,
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.black),
@@ -58,54 +72,8 @@ class PaymentPlanState extends State<PaymentPlan> {
             Container(
               width: screenWidth/1.25,
               height: screenHeight/8,
-              margin: EdgeInsets.only(top: screenHeight/8,left: screenWidth/10),
-              decoration: (BoxDecoration(
-                  border: Border.all(color:selected1?Constants.appTextColor:Colors.transparent,width: 2),
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: Colors.grey.shade200
-              )),
-              child: InkWell(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('\$23/Month',style: TextStyle(fontSize: 20,color: Constants.appTextColor),),
-                    SizedBox(height: 6,),
-                    Text('\$276 for 12 months',style: TextStyle(fontSize: 16,color: Colors.black87),),
-                  ],
-                ),
-                onTap: (){
-                  setState((){
-                    selected1=true;
-                    selected2=false;
-                  });
-                },
-              ),
-            ),
-            Container(
-              width: screenWidth/1.25,
-              height: screenHeight/8,
               margin: EdgeInsets.only(top: screenHeight/15,left: screenWidth/10),
-              decoration: (BoxDecoration(
-                  border: Border.all(color:selected2?Constants.appTextColor:Colors.transparent,width: 2),
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  color: Colors.grey.shade200
-              )),
-              child: InkWell(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('\$200/Yearly',style: TextStyle(fontSize: 20,color:Constants.appTextColor),),
-                    SizedBox(height: 6,),
-                    Text('save \$76',style: TextStyle(fontSize: 16,color: Colors.black87),),
-                  ],
-                ),
-                onTap: (){
-                  setState((){
-                    selected2=true;
-                    selected1=false;
-                  });
-                },
-              ),
+              child:Center(child:Text('Pay the service charges',style: TextStyle(fontSize: 18,fontStyle: FontStyle.italic),) ,)
             ),
             Container(
               width: screenWidth/1.25,
@@ -117,7 +85,7 @@ class PaymentPlanState extends State<PaymentPlan> {
                 print(token);
                 makeUpiPayment(token,id.toString());
               },
-                child: Text('Pay Through UPI',style: TextStyle(color: Colors.white,fontSize: 16,fontStyle: FontStyle.italic),),
+                child: Text('Pay \$'+serviceModel.price+' Through UPI',style: TextStyle(color: Colors.white,fontSize: 16,fontStyle: FontStyle.italic),),
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue.shade400)),
               ) ,
             ),
@@ -131,7 +99,7 @@ class PaymentPlanState extends State<PaymentPlan> {
                 print(token);
                 makeCardPayment(token,id.toString());
               },
-                child: Text('Pay Through Bank',style: TextStyle(color: Colors.white,fontSize: 16),),
+                child: Text('Pay \$'+serviceModel.price+' Through Bank',style: TextStyle(color: Colors.white,fontSize: 16),),
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue.shade400)),
               ) ,
             )
@@ -153,7 +121,7 @@ class PaymentPlanState extends State<PaymentPlan> {
       },
       body: jsonEncode(<String, String>{
         "orderId": id,
-        "orderAmount":100.toString(),
+        "orderAmount":serviceModel.price.toString(),
         "orderCurrency":"INR"
       }),
     );
@@ -176,9 +144,9 @@ class PaymentPlanState extends State<PaymentPlan> {
 
     String orderId = id;
     String stage = "TEST"; //PROD
-    String orderAmount = 100.toString();
+    String orderAmount = serviceModel.price.toString();
     String tokenData = token;
-    String customerName = serviceModel.userId;
+    String customerName = userId;
     String orderNote = serviceModel.name;
     String orderCurrency = "INR";
     String appId = remoteConfig.getString('client_id');
@@ -202,12 +170,13 @@ class PaymentPlanState extends State<PaymentPlan> {
 
     CashfreePGSDK.doUPIPayment(inputParams)
         .then((value) => value?.forEach((key, value) {
-          if(value=='SUCCESS')
-            {
-              var serviceController=Get.put(ServiceController());
-              serviceController.updateService(serviceModel.name, serviceModel.userId);
-            }
-            Get.back();
+      if(value=='SUCCESS')
+      {
+         final controller=Get.put(ServiceController());
+         final order=Order(userId,userPhone, serviceModel.name, DateTime.now().toString(), 'in progress', serviceModel.serviceId);
+         controller.buyService(order,context);
+         Get.back();
+      }
       print("key is $key : value is$value");
       //Do something with the result
     }));
@@ -218,9 +187,9 @@ class PaymentPlanState extends State<PaymentPlan> {
 
     String orderId = id;
     String stage = "TEST"; //PROD
-    String orderAmount = 100.toString();
+    String orderAmount = serviceModel.price.toString();
     String tokenData = token;
-    String customerName = serviceModel.userId;
+    String customerName = userId;
     String orderNote = serviceModel.name;
     String orderCurrency = "INR";
     String appId = remoteConfig.getString('client_id');
@@ -246,10 +215,11 @@ class PaymentPlanState extends State<PaymentPlan> {
         .then((value) => value?.forEach((key, value) {
       if(value=='SUCCESS')
       {
-        var serviceController=Get.put(ServiceController());
-        serviceController.updateService(serviceModel.name, serviceModel.userId);
+        final controller=Get.put(ServiceController());
+        final order=Order(userId,userPhone, serviceModel.name, DateTime.now().toString(), 'in progress', serviceModel.serviceId);
+        controller.buyService(order,context);
+        Get.back();
       }
-      Get.back();
       print("key is $key : value is$value");
       //Do something with the result
     }));

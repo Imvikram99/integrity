@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:integrity/views/service_provider/service_detail.dart';
+import 'package:integrity/views/reviewer/service_detail.dart';
 
 import '../../controllers/serviceController.dart';
 
@@ -33,7 +33,6 @@ class ServiceListState extends State<ServicesList> {
          builder: (ServiceController controller) {
            controller.getServiceByCategory(title);
            return controller.services.length>0?
-               controller.services.length==0?Center(child: CircularProgressIndicator(),):
            ListView.builder(
                itemCount: controller.services.length,
                itemBuilder: (BuildContext context, int index) {
@@ -85,10 +84,9 @@ class ServiceListState extends State<ServicesList> {
                  );
                },
              )
-           :Center(child: Text('No service available in this category',),);
+           :Center(child: CircularProgressIndicator(),);
          },
        ),
      );
   }
-
 }

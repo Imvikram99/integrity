@@ -4,6 +4,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:integrity/controllers/serviceController.dart';
 import 'package:integrity/models/Order.dart';
 import 'package:integrity/models/serviceModel.dart';
+import 'package:integrity/views/reviewer/buy_service.dart';
 
 
 class ServiceDetail extends StatefulWidget{
@@ -62,9 +63,7 @@ class ServiceDetailState extends State<ServiceDetail> {
             Text(serviceModel.webAddress),
             SizedBox(height: 6,),
             TextButton(onPressed: (){
-              final controller=Get.put(ServiceController());
-              final order=Order(userId, serviceModel.name, DateTime.now().toString(), 'order placed', serviceModel.serviceId);
-              controller.buyService(order,context);
+              Get.to(()=>BuyService(),arguments: serviceModel);
             },
              style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(

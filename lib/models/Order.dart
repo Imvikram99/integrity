@@ -3,12 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Order{
   late String orderId;
   late String userId;
+  late String userPhone;
   late String serviceId;
   late String name;
   late String date;
   late String status;
 
-  Order(this.userId,this.name,this.date,this.status,this.serviceId);
+  Order(this.userId,this.userPhone,this.name,this.date,this.status,this.serviceId);
 
 
 /*  ServiceModel.fromJson(Map<String,dynamic> json){
@@ -39,6 +40,7 @@ class Order{
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['userId']=this.userId;
+    data['userNumber']=this.userPhone;
     data['name'] = this.name;
     data['serviceId'] = this.serviceId;
     data['status'] = this.status;
@@ -49,6 +51,7 @@ class Order{
   Order.fromDocumentSnapshot({required DocumentSnapshot documentSnapshot}) {
     orderId=documentSnapshot.id;
     serviceId = documentSnapshot['serviceId'].toString();
+    userPhone = documentSnapshot['userNumber'].toString();
     userId=documentSnapshot['userId'].toString();
     name=documentSnapshot['name'].toString();
     status=documentSnapshot['status'].toString();

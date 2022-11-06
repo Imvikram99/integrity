@@ -10,7 +10,7 @@ import 'package:integrity/views/reviewer/service_detail.dart';
 import '../../controllers/category_controller.dart';
 import '../../controllers/serviceController.dart';
 import '../../models/serviceModel.dart';
-import '../service_provider/services_list.dart';
+import 'services_list.dart';
 
 
 class Reviewer_Home_Page extends StatefulWidget {

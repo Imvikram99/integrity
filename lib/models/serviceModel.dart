@@ -7,6 +7,7 @@ class ServiceModel{
   late String categoryName;
   late String status;
   late String description;
+  late String price;
   late String availabilityStartTime;
   late String availabilityEndTime;
   late String availabilityStartDate;
@@ -25,7 +26,7 @@ class ServiceModel{
   late String webAddress;
   List<CustomFields>? customFileds;
 
-  ServiceModel(this.userId,this.name,this.categoryName,this.status,this.description,
+  ServiceModel(this.userId,this.name,this.categoryName,this.status,this.description,this.price,
       this.availabilityStartTime,this.availabilityEndTime,
       this.availabilityStartDate,this.availabilityEndDate,this.country,this.state,this.city,this.pinCode,this.latitude,this.longitude,
       this.email,this.upiLink,this.watsApp,this.telegram,this.zoom,this.webAddress,this.customFileds);
@@ -36,6 +37,7 @@ class ServiceModel{
     categoryName=json['category'].toString();
     status=json['status'].toString();
     description=json['desc'].toString();
+    price=json['price'].toString();
     availabilityStartTime=json['startTime'].toString();
     availabilityEndTime=json['endTime'].toString();
     availabilityStartDate=json['startDate'].toString();
@@ -62,6 +64,7 @@ class ServiceModel{
     data['category'] = this.categoryName;
     data['status'] = this.status;
     data['desc'] = this.description;
+    data['price'] = this.price;
     data['startTime'] = this.availabilityStartTime;
     data['endTime'] = this.availabilityEndTime;
     data['startDate'] = this.availabilityStartDate;
@@ -90,6 +93,7 @@ class ServiceModel{
     categoryName=documentSnapshot['category'].toString();
    // status=documentSnapshot['status'].toString();
     description=documentSnapshot['desc'].toString();
+    price=documentSnapshot['price'].toString();
     availabilityStartTime=documentSnapshot['startTime'].toString();
     availabilityEndTime=documentSnapshot['endTime'].toString();
     availabilityStartDate=documentSnapshot['startDate'].toString();
