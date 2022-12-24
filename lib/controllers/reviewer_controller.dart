@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:integrity/models/Order.dart';
 
 class ReviewerController extends GetxController{
   FirebaseFirestore firestore=FirebaseFirestore.instance;
   Rx<List<Order>> ordersList = Rx<List<Order>>([]);
   List<Order> get orders => ordersList.value;
+  Rx<List<Order>> serviceOrdersList = Rx<List<Order>>([]);
+  List<Order> get serviceOrders => serviceOrdersList.value;
+  
   @override
   void onReady() {
     // TODO: implement onReady
@@ -16,27 +18,62 @@ class ReviewerController extends GetxController{
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    ordersList.bindStream(ordersStream());
   }
 
-  Stream<List<Order>> ordersStream() {
-    var id;
-    var doc=firestore.collection('users').where('userid',isEqualTo: 'fgJRY072MdbCu4izBqPtIThDXU73').get();
-   doc.then((value) =>
-    {
-      id=value.docs.first.id,
-      print(id)
-    });
+  getMyOrders(String id){
+    ordersList.bindStream(ordersStream(id));
+  }
+
+  getServiceOrders(String serviceId){
+    serviceOrdersList.bindStream(serviceOrdersStream(serviceId));
+  }
+  
+  Stream<List<Order>> ordersStream(String id) {
     return firestore
-        .collection('users').doc('C4KrvY3rvvCoFpKvkX6C').collection('orders')
+        .collection('orders').where('buyerId',isEqualTo: id)
         .snapshots()
         .map((QuerySnapshot query) {
-      List<Order> services = [];
+      List<Order> orders = [];
       for (var doc in query.docs) {
-        final service =Order.fromDocumentSnapshot(documentSnapshot: doc);
-        services.add(service);
+        final order =Order.fromDocumentSnapshot(documentSnapshot: doc);
+        orders.add(order);
       }
-      return services;
+      return orders;
+    });
+  }
+
+  Stream<List<Order>> serviceOrdersStream(String id) {
+    return firestore
+        .collection('orders').where('serviceId',isEqualTo: id)
+        .snapshots()
+        .map((QuerySnapshot query) {
+      List<Order> orders = [];
+      for (var doc in query.docs) {
+        final order =Order.fromDocumentSnapshot(documentSnapshot: doc);
+        orders.add(order);
+      }
+      return orders;
+    });
+  }
+
+  updateOrderStatus(orderId,rating,review,serviceId) async{
+   await firestore.collection('orders').doc(orderId).update(
+        {
+          'buyerRating':rating,
+          'buyerReview':review,
+        }).whenComplete(() async {
+        await  firestore.collection('services').doc(serviceId).get().then((value) async{
+            double or=value.data()!['totalOrders'].toDouble();
+            double ra=value.data()!['averageRating'].toDouble();
+            double to=or+1;
+            double tr=ra+rating;
+            double ave=tr/to;
+          await  firestore.collection('services').doc(serviceId).update({
+              'totalOrders':to,
+              'averageRating':ave
+            });
+
+          });
     });
   }
 }

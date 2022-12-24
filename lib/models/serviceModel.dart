@@ -24,12 +24,14 @@ class ServiceModel{
   late String telegram;
   late String zoom;
   late String webAddress;
+  late double totalOrders;
+  late double averageRating;
   List<CustomFields>? customFileds;
 
   ServiceModel(this.userId,this.name,this.categoryName,this.status,this.description,this.price,
       this.availabilityStartTime,this.availabilityEndTime,
       this.availabilityStartDate,this.availabilityEndDate,this.country,this.state,this.city,this.pinCode,this.latitude,this.longitude,
-      this.email,this.upiLink,this.watsApp,this.telegram,this.zoom,this.webAddress,this.customFileds);
+      this.email,this.upiLink,this.watsApp,this.telegram,this.zoom,this.webAddress,this.totalOrders,this.averageRating,this.customFileds);
 
   ServiceModel.fromJson(Map<String,dynamic> json){
     userId=json['userId'].toString();
@@ -81,6 +83,8 @@ class ServiceModel{
     data['telegram'] = this.telegram;
     data['zoom'] = this.zoom;
     data['webLink'] = this.webAddress;
+    data['totalOrders'] = this.totalOrders;
+    data['averageRating'] = this.averageRating;
     data['customData']=_valuesList(customFileds);
 
     return data;
@@ -91,7 +95,7 @@ class ServiceModel{
     userId=documentSnapshot['userId'].toString();
     name=documentSnapshot['name'].toString();
     categoryName=documentSnapshot['category'].toString();
-   // status=documentSnapshot['status'].toString();
+    status=documentSnapshot['status'].toString();
     description=documentSnapshot['desc'].toString();
     price=documentSnapshot['price'].toString();
     availabilityStartTime=documentSnapshot['startTime'].toString();
@@ -99,7 +103,7 @@ class ServiceModel{
     availabilityStartDate=documentSnapshot['startDate'].toString();
     availabilityEndDate=documentSnapshot['endDate'].toString();
     country=documentSnapshot['country'].toString();
-    country=documentSnapshot['state'].toString();
+    state=documentSnapshot['state'].toString();
     city=documentSnapshot['city'].toString();
     pinCode=documentSnapshot['pinCode'].toString();
     latitude=documentSnapshot['latitude'].toString();
@@ -110,6 +114,8 @@ class ServiceModel{
     telegram=documentSnapshot['telegram'].toString();
     zoom=documentSnapshot['zoom'].toString();
     webAddress=documentSnapshot['webLink'].toString();
+    totalOrders=documentSnapshot['totalOrders'].toDouble();
+    averageRating=documentSnapshot['averageRating'].toDouble();
     customFileds=_convertValues(documentSnapshot['customData']);
   }
 

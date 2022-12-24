@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:integrity/controllers/serviceController.dart';
 import 'package:integrity/models/Order.dart';
 import 'package:integrity/models/serviceModel.dart';
+import 'package:integrity/views/reviewer/my_orders.dart';
 
 class BuyService extends StatefulWidget{
   @override
@@ -77,7 +78,7 @@ class BuyServiceState extends State<BuyService> {
             ),
             Container(
               width: screenWidth/1.25,
-              height: screenHeight/18,
+              height: screenHeight/15,
               margin: EdgeInsets.only(top: screenHeight/4,left: screenWidth/10),
               child:TextButton(onPressed: ()async {
                 final id = UniqueKey().hashCode;
@@ -85,13 +86,16 @@ class BuyServiceState extends State<BuyService> {
                 print(token);
                 makeUpiPayment(token,id.toString());
               },
-                child: Text('Pay \$'+serviceModel.price+' Through UPI',style: TextStyle(color: Colors.white,fontSize: 16,fontStyle: FontStyle.italic),),
+                child:Align(
+                  alignment: Alignment.center,
+                  child:Text('Pay \$'+serviceModel.price+' to ${serviceModel.upiLink} \n Through UPI',style: TextStyle(color: Colors.white,fontSize: 16,fontStyle: FontStyle.italic),),
+                ),
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue.shade400)),
               ) ,
             ),
             Container(
               width: screenWidth/1.25,
-              height: screenHeight/18,
+              height: screenHeight/15,
               margin: EdgeInsets.only(top: screenHeight/15,left: screenWidth/10),
               child:TextButton(onPressed: ()async {
                 final id = UniqueKey().hashCode;
@@ -99,7 +103,7 @@ class BuyServiceState extends State<BuyService> {
                 print(token);
                 makeCardPayment(token,id.toString());
               },
-                child: Text('Pay \$'+serviceModel.price+' Through Bank',style: TextStyle(color: Colors.white,fontSize: 16),),
+                child: Text('Pay \$'+serviceModel.price+' to ${serviceModel.upiLink} \n Through Bank',style: TextStyle(color: Colors.white,fontSize: 16,fontStyle: FontStyle.italic),),
                 style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue.shade400)),
               ) ,
             )
@@ -152,7 +156,7 @@ class BuyServiceState extends State<BuyService> {
     String appId = remoteConfig.getString('client_id');
     String customerPhone = userPhone;
     String customerEmail = serviceModel.email;
-    String notifyUrl = "https://webhook.site/51b08dda-cca7-4979-844a-10f2e8b48d5b";
+    String notifyUrl = "https://webhook.site/472fc2d6-eb67-48e8-ab69-15cedd664015";
 
     Map<String, dynamic> inputParams = {
       "orderId": orderId,
@@ -173,9 +177,10 @@ class BuyServiceState extends State<BuyService> {
       if(value=='SUCCESS')
       {
          final controller=Get.put(ServiceController());
-         final order=Order(userId,userPhone, serviceModel.name, DateTime.now().toString(), 'in progress', serviceModel.serviceId);
+         final order=Order(userId,serviceModel.userId,serviceModel.serviceId,userPhone,serviceModel.email,serviceModel.name,DateTime.now().toString(),'in Progress'
+             ,0,'',0,'');
          controller.buyService(order,context);
-         Get.back();
+         Get.offAll(()=>Myorders());
       }
       print("key is $key : value is$value");
       //Do something with the result
@@ -195,7 +200,7 @@ class BuyServiceState extends State<BuyService> {
     String appId = remoteConfig.getString('client_id');
     String customerPhone = userPhone;
     String customerEmail = serviceModel.email;
-    String notifyUrl = "https://webhook.site/51b08dda-cca7-4979-844a-10f2e8b48d5b";
+    String notifyUrl = "https://webhook.site/472fc2d6-eb67-48e8-ab69-15cedd664015";
 
     Map<String, dynamic> inputParams = {
       "orderId": orderId,
@@ -216,9 +221,10 @@ class BuyServiceState extends State<BuyService> {
       if(value=='SUCCESS')
       {
         final controller=Get.put(ServiceController());
-        final order=Order(userId,userPhone, serviceModel.name, DateTime.now().toString(), 'in progress', serviceModel.serviceId);
+        final order=Order(userId,serviceModel.userId,serviceModel.serviceId,userPhone,serviceModel.email,serviceModel.name,DateTime.now().toString(),'in Progress'
+            ,0,'',0,'');
         controller.buyService(order,context);
-        Get.back();
+        Get.offAll(()=>Myorders());
       }
       print("key is $key : value is$value");
       //Do something with the result

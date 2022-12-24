@@ -6,6 +6,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:integrity/constants.dart';
 import 'package:integrity/controllers/category_controller.dart';
 import 'package:integrity/controllers/serviceController.dart';
 import 'package:integrity/models/category.dart';
@@ -22,6 +23,9 @@ class _CreateServiceState extends State<CreateService> {
   final box=GetStorage();
   String? userId;
   late String dropdownValue;
+  final optionItems=<String>[];
+  late String selectedCategory;
+
 
   TextEditingController serviceNameController=TextEditingController();
   TextEditingController serviceCategoryController=TextEditingController();
@@ -255,7 +259,7 @@ class _CreateServiceState extends State<CreateService> {
                         children: [
                           SizedBox(width: 10,),
                           Expanded(flex: 4,
-                            child: Text('Create Service',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: Colors.cyan.shade800),),
+                            child: Text('Create Service',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: Constants.appTextColor),),
                           ),
                           Expanded(flex: 1,
                             child: IconButton(icon: Icon(Icons.clear),
@@ -290,112 +294,6 @@ class _CreateServiceState extends State<CreateService> {
                           }
                           return null;
                         },
-                        onTap: (){
-
-                        },
-                      ),
-                      SizedBox(height: 20,),
-                      GetX<CategoryController>(
-                        init: Get.put(CategoryController()),
-                        builder: (controller){
-                          final n=<String>[];
-                          controller.categories.forEach((element) {
-                            n.add(element.name);
-                          });
-                          dropdownValue = n[0];
-                          return DropdownButtonFormField(
-                            decoration: InputDecoration(
-                                enabledBorder: new OutlineInputBorder(
-                                  borderRadius: new BorderRadius.circular(15.0),
-                                  borderSide:  BorderSide(color:  Colors.grey.shade200 ),
-
-                                ),
-                                focusedBorder: new OutlineInputBorder(
-                                  borderRadius: new BorderRadius.circular(15.0),
-                                  borderSide:  BorderSide(color:  Colors.cyan.shade700 ),
-
-                                ),
-                                filled: true,
-                                fillColor: Colors.grey.shade200),
-                            dropdownColor: Colors.grey.shade200,
-                            value: dropdownValue,
-                            onChanged: (String? newValue) {
-                              sheetState(() {
-                                dropdownValue = newValue!;
-                                print(dropdownValue);
-                              });
-                            },
-                            items: n.map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                              );
-                            }).toList(),
-                          );
-
-                        },
-                      ),
-                      SizedBox(height: 20,),
-                      TextFormField(
-                        controller: servicePriceController,
-                        style:  TextStyle(color: Colors.black87, fontSize: 16),
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                            enabledBorder: new OutlineInputBorder(
-                              borderRadius: new BorderRadius.circular(15.0),
-                              borderSide:  BorderSide(color:  Colors.grey.shade200 ),
-
-                            ),
-                            focusedBorder: new OutlineInputBorder(
-                              borderRadius: new BorderRadius.circular(15.0),
-                              borderSide:  BorderSide(color:  Colors.cyan.shade700 ),
-
-                            ),
-                            filled: true,
-                            hintStyle: TextStyle(color: Colors.grey.shade500,fontSize: 14),
-                            hintText: "Service Price",
-                            fillColor: Colors.grey.shade200),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter service price';
-                          }
-                          return null;
-                        },
-                        onTap: (){
-
-                        },
-                      ),
-                      SizedBox(height: 20,),
-                      TextFormField(
-                        controller: serviceDescriptionController,
-                        style:  TextStyle(color: Colors.black87, fontSize: 16),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter service description';
-                          }
-                          else if(value.length>500)
-                          {
-                            return 'description should be short';
-                          }
-                          return null;
-                        },
-                        decoration: InputDecoration(
-                            enabledBorder: new OutlineInputBorder(
-                              borderRadius: new BorderRadius.circular(15.0),
-                              borderSide:  BorderSide(color:  Colors.grey.shade200 ),
-                            ),
-                            focusedBorder: new OutlineInputBorder(
-                              borderRadius: new BorderRadius.circular(15.0),
-                              borderSide:  BorderSide(color:  Colors.cyan.shade700 ),
-                            ),
-                            filled: true,
-                            hintStyle: TextStyle(color: Colors.grey.shade500,fontSize: 14),
-                            hintText: "Type short Description",
-                            fillColor: Colors.grey.shade200),
-                        maxLines: 5,
                         onTap: (){
 
                         },
@@ -619,6 +517,111 @@ class _CreateServiceState extends State<CreateService> {
                           });
                         },
 
+                      ),
+                      SizedBox(height: 20,),
+                      GetX<CategoryController>(
+                        init: Get.put(CategoryController()),
+                        builder: (controller){
+                          optionItems.clear();
+                          controller.categories.forEach((element) {
+                            optionItems.add(element.name);
+                          });
+                            dropdownValue=optionItems[0];
+                            print(dropdownValue);
+                          return DropdownButtonFormField(
+                            decoration: InputDecoration(
+                                enabledBorder: new OutlineInputBorder(
+                                  borderRadius: new BorderRadius.circular(15.0),
+                                  borderSide:  BorderSide(color:  Colors.grey.shade200 ),
+
+                                ),
+                                focusedBorder: new OutlineInputBorder(
+                                  borderRadius: new BorderRadius.circular(15.0),
+                                  borderSide:  BorderSide(color:  Colors.cyan.shade700 ),
+
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey.shade200),
+                            dropdownColor: Colors.grey.shade200,
+                            value: dropdownValue,
+                            onChanged: (String? newValue) {
+                              dropdownValue = newValue!;
+                              selectedCategory=newValue;
+                            },
+                            items: optionItems.map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                              );
+                            }).toList(),
+                          );
+
+                        },
+                      ),
+                      SizedBox(height: 20,),
+                      TextFormField(
+                        controller: servicePriceController,
+                        style:  TextStyle(color: Colors.black87, fontSize: 16),
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                            enabledBorder: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(15.0),
+                              borderSide:  BorderSide(color:  Colors.grey.shade200 ),
+
+                            ),
+                            focusedBorder: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(15.0),
+                              borderSide:  BorderSide(color:  Colors.cyan.shade700 ),
+
+                            ),
+                            filled: true,
+                            hintStyle: TextStyle(color: Colors.grey.shade500,fontSize: 14),
+                            hintText: "Service Price",
+                            fillColor: Colors.grey.shade200),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter service price';
+                          }
+                          return null;
+                        },
+                        onTap: (){
+
+                        },
+                      ),
+                      SizedBox(height: 20,),
+                      TextFormField(
+                        controller: serviceDescriptionController,
+                        style:  TextStyle(color: Colors.black87, fontSize: 16),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter service description';
+                          }
+                          else if(value.length>500)
+                          {
+                            return 'description should be short';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                            enabledBorder: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(15.0),
+                              borderSide:  BorderSide(color:  Colors.grey.shade200 ),
+                            ),
+                            focusedBorder: new OutlineInputBorder(
+                              borderRadius: new BorderRadius.circular(15.0),
+                              borderSide:  BorderSide(color:  Colors.cyan.shade700 ),
+                            ),
+                            filled: true,
+                            hintStyle: TextStyle(color: Colors.grey.shade500,fontSize: 14),
+                            hintText: "Type short Description",
+                            fillColor: Colors.grey.shade200),
+                        maxLines: 5,
+                        onTap: (){
+
+                        },
                       ),
                       SizedBox(height: 20,),
                       TextFormField(
@@ -900,11 +903,11 @@ class _CreateServiceState extends State<CreateService> {
                           addCustomField();
                         });
                       },
-                          style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue),
+                          style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Constants.appButtonColor),
                               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(15.0),
-                                      side: BorderSide(color: Colors.blue)
+                                      side: BorderSide(color:Constants.appButtonColor)
                                   )
                               ),
                               padding: MaterialStateProperty.all(EdgeInsets.only(top: 15,bottom: 15,left: 20,right: 20))
@@ -921,18 +924,18 @@ class _CreateServiceState extends State<CreateService> {
                               sheetState((){
                                 saving=true;
                               });
-                              ServiceModel model=ServiceModel(userId!,serviceNameController.text,dropdownValue.tr,'draft', serviceDescriptionController.text,servicePriceController.text,
+                              ServiceModel model=ServiceModel(userId!,serviceNameController.text,selectedCategory,'draft', serviceDescriptionController.text,servicePriceController.text,
                                   startTimeController.text, endTimeController.text, startDayController.text, endDayController.text,
                                   countryValue,stateValue,cityValue,pinCodeController.text,lat.toString(),long.toString(),emailController.text,
                                   upiController.text,watsAppController.text
-                                  ,telegramController.text,zoomLinkController.text,webLinkController.text,customFileds);
+                                  ,telegramController.text,zoomLinkController.text,webLinkController.text,0,0,customFileds);
                               addService(model);
                             },
-                                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.blue),
+                                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Constants.appButtonColor),
                                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                                         RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(15.0),
-                                            side: BorderSide(color: Colors.blue)
+                                            side: BorderSide(color: Constants.appButtonColor)
                                         )
                                     ),
                                     padding: MaterialStateProperty.all(EdgeInsets.only(top: 20,bottom: 20))
