@@ -95,7 +95,9 @@ class _LogIn_pageState extends State<LogIn_page> {
 
                   }
             }
-          });
+          }).onError((error, stackTrace){
+      showSnackBarText(error.toString());
+    });
   }
 
   

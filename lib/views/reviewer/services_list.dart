@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:integrity/constants.dart';
 import 'package:integrity/views/reviewer/service_detail.dart';
 
 import '../../controllers/serviceController.dart';
@@ -22,18 +23,18 @@ class ServiceListState extends State<ServicesList> {
   Widget build(BuildContext context) {
      return Scaffold(
        appBar:AppBar(
-         title: Text(title,style: TextStyle(color: Colors.black),),
+         title: Text(title,),
          centerTitle: true,
-         backgroundColor: Colors.white,
-         iconTheme: IconThemeData(color: Colors.black),
-         elevation: 0,
+         backgroundColor: Constants.appButtonColor,
        ),
-       body: GetX<ServiceController>(
-         init: Get.put<ServiceController>(ServiceController()),
-         builder: (ServiceController controller) {
-           controller.getServiceByCategory(title);
-           return controller.services.length>0?
-           ListView.builder(
+       body:Container(
+         margin: EdgeInsets.only(top: 10,left: 4,right: 4),
+         child:GetX<ServiceController>(
+           init: Get.put<ServiceController>(ServiceController()),
+           builder: (ServiceController controller) {
+             controller.getServiceByCategory(title);
+             return controller.services.length>0?
+             ListView.builder(
                itemCount: controller.services.length,
                itemBuilder: (BuildContext context, int index) {
                  final model = controller.services[index];
@@ -47,7 +48,7 @@ class ServiceListState extends State<ServicesList> {
                        horizontal: 4,
                        vertical: 4,
                      ),
-                     padding: EdgeInsets.only(left: 10),
+                     padding: EdgeInsets.only(left: 10,right: 15),
                      decoration: BoxDecoration(
                          color: Colors.grey.shade200,
                          borderRadius: BorderRadius.circular(10),
@@ -57,11 +58,22 @@ class ServiceListState extends State<ServicesList> {
                        crossAxisAlignment: CrossAxisAlignment.start,
                        children: [
                          SizedBox(height: 10,),
-                         Text(
-                           model.name,
-                           style: TextStyle(
-                             fontSize: Get.textTheme.headline6!.fontSize,
-                           ),
+                         Row(
+                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                           children: [
+                             Text(
+                               model.name,
+                               style: TextStyle(
+                                 fontSize: Get.textTheme.headline6!.fontSize,
+                               ),
+                             ),
+                             Text(
+                               model.averageRating.toString()+'/5',
+                               style: TextStyle(
+                                 fontSize: Get.textTheme.headline6!.fontSize,
+                               ),
+                             )
+                           ],
                          ),
                          SizedBox(height: 10,),
                          Text(
@@ -83,9 +95,12 @@ class ServiceListState extends State<ServicesList> {
                    ),
                  );
                },
-             )
-           :Center(child: CircularProgressIndicator(),);
-         },
+             ):
+             controller.services.length==0?
+               Center(child: Text('No Service Avaiable in this Category',style: TextStyle(color: Colors.grey.shade600,fontStyle: FontStyle.italic),),)
+               :Center(child: CircularProgressIndicator(),);
+           },
+         ) ,
        ),
      );
   }

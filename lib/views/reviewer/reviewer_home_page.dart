@@ -3,7 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:integrity/constants.dart';
 import 'package:integrity/screens/login_page.dart';
+import 'package:integrity/views/reviewer/profile.dart';
+import 'package:integrity/views/service_provider/profile.dart';
 import 'package:integrity/views/reviewer/my_orders.dart';
 import 'package:integrity/views/reviewer/service_detail.dart';
 
@@ -27,32 +30,43 @@ class Reviewer__Home_PageState extends State<Reviewer_Home_Page> {
   var items = <ServiceModel>[];
   String q='';
   final box = GetStorage();
+  late String userId;
+
+  @override
+  void initState() {
+    super.initState();
+    if(box!=null)
+    {
+      userId= box.read('id');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     duplicateItems.addAll(serviceController.allServices);
     return Scaffold(
+        appBar: AppBar(
+          title: Text(Constants.appName),
+          centerTitle: true,
+          backgroundColor: Constants.appButtonColor,
+          actions: [
+            GestureDetector(
+              child: Icon(Icons.person_outline),
+              onTapDown: (TapDownDetails details){
+                _showPopupMenu(
+                    context, details.globalPosition);
+              },
+            ),
+            SizedBox(width: 20,),
+            Icon(Icons.add_alert_outlined),
+            SizedBox(width: 20,)
+          ],
+        ),
         body:SafeArea(
           child:Container(
             margin: EdgeInsets.only(left: 15,right: 10,top: 20),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Expanded( flex: 6, child: Text('Categories',style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold,color: Colors.blueGrey.shade700),)),
-                    Expanded( flex: 1,
-                        child:GestureDetector(
-                          child: Icon(Icons.person_outline),
-                          onTapDown: (TapDownDetails details){
-                            _showPopupMenu(
-                                context, details.globalPosition);
-                          },
-                        )
-                    ),
-                    Expanded( flex: 1,child: Icon(Icons.add_alert_outlined))
-                  ],
-                ),
-                SizedBox(height: 30,),
                 TextField(
                   decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -180,11 +194,10 @@ class Reviewer__Home_PageState extends State<Reviewer_Home_Page> {
             borderRadius: BorderRadius.all(Radius.circular(12.0))),
         items: [
           PopupMenuItem<String>(
-            child: const Text('LogOut'),
+            child: const Text('My Profile'),
             onTap: () async{
-              box.erase();
               await Future.delayed(const Duration(milliseconds: 10));
-              Get.offAll(()=>LogIn_page());
+              Get.to(()=>ReviewerProfile(),arguments: userId);
             },),
           PopupMenuItem<String>(
             child: const Text('My Orders'),
@@ -193,6 +206,13 @@ class Reviewer__Home_PageState extends State<Reviewer_Home_Page> {
               Get.to(()=>Myorders());
             },
           ),
+          PopupMenuItem<String>(
+            child: const Text('LogOut'),
+            onTap: () async{
+              box.erase();
+              await Future.delayed(const Duration(milliseconds: 10));
+              Get.offAll(()=>LogIn_page());
+            },),
         ]
     );
   }

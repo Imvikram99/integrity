@@ -57,7 +57,7 @@ class ServiceController extends GetxController{
     serviceList.bindStream(serviceStream(category));
   }
 
-  updateService(String name,id)
+  updateServiceStatus(String name,id)
   {
     firestore.collection('services').where('name',isEqualTo: name).where('userId',isEqualTo: id).get().then((value) =>
     {
@@ -72,6 +72,7 @@ class ServiceController extends GetxController{
     return firestore
         .collection('services')
         .where('category',isEqualTo: c)
+         .where('status',isEqualTo: 'published')
         .snapshots()
         .map((QuerySnapshot query) {
       List<ServiceModel> services = [];
@@ -107,6 +108,7 @@ class ServiceController extends GetxController{
         final service =ServiceModel.fromDocumentSnapshot(documentSnapshot: doc);
         services.add(service);
       }
+      services.sort((a, b) => b.status.compareTo(a.status));
       return services;
     });
   }
@@ -118,7 +120,14 @@ class ServiceController extends GetxController{
         isBottomBarOverlay: true,
         progressIndicator: CircularProgressIndicator(),
         overlayColor: Colors.transparent);
-   await firestore.collection('services').doc(order.serviceId).collection('orders').add(order.toJson()).then((ordr) => {
+    await firestore.collection('orders').add(order.toJson()).whenComplete(() =>
+    {
+      Loader.hide(),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Order placed successfully '),),),
+      Get.back()
+    }
+    );
+  /* await firestore.collection('services').doc(order.serviceId).collection('orders').add(order.toJson()).then((ordr) => {
           firestore.collection('users').where('userid',isEqualTo: order.userId).get().then((value) =>
           {
            // print(value.docs.first.id)
@@ -133,7 +142,7 @@ class ServiceController extends GetxController{
    .catchError((error) => {
       Loader.hide(),
      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error),),),
-    });
+    });*/
 
   }
 
@@ -143,7 +152,7 @@ class ServiceController extends GetxController{
   }
   Stream<List<Order>> ordersStream(String id) {
     return firestore
-        .collection('services').doc(id).collection('orders')
+        .collection('orders').where('serviceId',isEqualTo: id)
         .snapshots()
         .map((QuerySnapshot query) {
       List<Order> services = [];
@@ -155,10 +164,27 @@ class ServiceController extends GetxController{
     });
   }
 
-  updateOrderStatus(String serviceId,orderId,status){
-    firestore.collection('services').doc(serviceId).collection('orders').doc(orderId).update(
+  updateOrderStatus(orderId,rating,review,status){
+    firestore.collection('orders').doc(orderId).update(
         {
-          'status':status
+          'serviceRating':rating,
+          'serviceReview':review,
+          'orderStatus':status
         });
+  }
+
+  pauseService(String id){
+    firestore.collection('services').doc(id).update({
+      'status':'paused'
+    });
+  }
+  reActivateService(String id){
+    firestore.collection('services').doc(id).update({
+      'status':'published'
+    });
+  }
+  updateService(ServiceModel model,String id)
+  {
+    firestore.collection('services').doc(id).set(model.toJson()).onError((error, stackTrace) => print('error='+error.toString()));
   }
 }

@@ -205,7 +205,7 @@ class PaymentPlanState extends State<PaymentPlan> {
           if(value=='SUCCESS')
             {
               var serviceController=Get.put(ServiceController());
-              serviceController.updateService(serviceModel.name, serviceModel.userId);
+              serviceController.updateServiceStatus(serviceModel.name, serviceModel.userId);
             }
             Get.back();
       print("key is $key : value is$value");
@@ -247,7 +247,7 @@ class PaymentPlanState extends State<PaymentPlan> {
       if(value=='SUCCESS')
       {
         var serviceController=Get.put(ServiceController());
-        serviceController.updateService(serviceModel.name, serviceModel.userId);
+        serviceController.updateServiceStatus(serviceModel.name, serviceModel.userId);
       }
       Get.back();
       print("key is $key : value is$value");

@@ -2,59 +2,55 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Order{
   late String orderId;
-  late String userId;
-  late String userPhone;
+  late String buyerId;
+  late String serviceProviderId;
   late String serviceId;
-  late String name;
-  late String date;
-  late String status;
+  late String buyerPhone;
+  late String servicePhone;
+  late String serviceName;
+  late String orderDate;
+  late String orderStatus;
+  late double buyerRating;
+  late String buyerReview;
+  late double serviceRating;
+  late String serviceReview;
 
-  Order(this.userId,this.userPhone,this.name,this.date,this.status,this.serviceId);
+  Order(this.buyerId,this.serviceProviderId,this.serviceId,this.buyerPhone,this.servicePhone,this.serviceName,this.orderDate,this.orderStatus,this.buyerRating,this.buyerReview
+      ,this.serviceRating,this.serviceReview);
 
 
-/*  ServiceModel.fromJson(Map<String,dynamic> json){
-    userId=json['userId'].toString();
-    name=json['name'].toString();
-    categoryName=json['category'].toString();
-    status=json['status'].toString();
-    description=json['desc'].toString();
-    availabilityStartTime=json['startTime'].toString();
-    availabilityEndTime=json['endTime'].toString();
-    availabilityStartDate=json['startDate'].toString();
-    availabilityEndDate=json['endDate'].toString();
-    country=json['country'].toString();
-    country=json['state'].toString();
-    city=json['city'].toString();
-    pinCode=json['pinCode'].toString();
-    latitude=json['latitude'].toString();
-    longitude=json['longitude'].toString();
-    email=json['email'].toString();
-    upiLink=json['upiLink'].toString();
-    watsApp=json['watsApp'].toString();
-    telegram=json['telegram'].toString();
-    zoom=json['zoom'].toString();
-    webAddress=json['webLink'].toString();
-    customFileds=_convertValues(json['customData']);
-  }*/
+
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['userId']=this.userId;
-    data['userNumber']=this.userPhone;
-    data['name'] = this.name;
+    data['buyerId']=this.buyerId;
+    data['providerId']=this.serviceProviderId;
     data['serviceId'] = this.serviceId;
-    data['status'] = this.status;
-    data['date'] = this.date;
+    data['buyerPhone'] = this.buyerPhone;
+    data['servicePhone'] = this.servicePhone;
+    data['serviceName'] = this.serviceName;
+    data['orderDate'] = this.orderDate;
+    data['orderStatus'] = this.orderStatus;
+    data['buyerRating'] = this.buyerRating;
+    data['buyerReview'] = this.buyerReview;
+    data['serviceRating'] = this.serviceRating;
+    data['serviceReview'] = this.serviceReview;
     return data;
   }
 
   Order.fromDocumentSnapshot({required DocumentSnapshot documentSnapshot}) {
     orderId=documentSnapshot.id;
-    serviceId = documentSnapshot['serviceId'].toString();
-    userPhone = documentSnapshot['userNumber'].toString();
-    userId=documentSnapshot['userId'].toString();
-    name=documentSnapshot['name'].toString();
-    status=documentSnapshot['status'].toString();
-    date=documentSnapshot['date'].toString();
+    buyerId = documentSnapshot['buyerId'].toString();
+    serviceProviderId = documentSnapshot['providerId'].toString();
+    serviceId=documentSnapshot['serviceId'].toString();
+    buyerPhone=documentSnapshot['buyerPhone'].toString();
+    servicePhone=documentSnapshot['servicePhone'].toString();
+    serviceName=documentSnapshot['serviceName'].toString();
+    orderDate=documentSnapshot['orderDate'].toString();
+    orderStatus=documentSnapshot['orderStatus'].toString();
+    buyerRating=documentSnapshot['buyerRating'].toDouble();
+    buyerReview=documentSnapshot['buyerReview'].toString();
+    serviceRating=documentSnapshot['serviceRating'];
+    serviceReview=documentSnapshot['serviceReview'].toString();
   }
 }
