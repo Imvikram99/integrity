@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:cashfree_pg/cashfree_pg.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
@@ -147,7 +146,7 @@ class BuyServiceState extends State<BuyService> {
     //Replace with actual values
 
     String orderId = id;
-    String stage = "TEST"; //PROD
+    String stage = Constants.cashFreeOrderStage;
     String orderAmount = serviceModel.price.toString();
     String tokenData = token;
     String customerName = userId;
@@ -156,7 +155,7 @@ class BuyServiceState extends State<BuyService> {
     String appId = remoteConfig.getString('client_id');
     String customerPhone = userPhone;
     String customerEmail = serviceModel.email;
-    String notifyUrl = "https://webhook.site/472fc2d6-eb67-48e8-ab69-15cedd664015";
+    String notifyUrl = Constants.cashFreeNotifyUrl;
 
     Map<String, dynamic> inputParams = {
       "orderId": orderId,
@@ -180,7 +179,8 @@ class BuyServiceState extends State<BuyService> {
          final order=Order(userId,serviceModel.userId,serviceModel.serviceId,userPhone,serviceModel.email,serviceModel.name,DateTime.now().toString(),'in Progress'
              ,0,'',0,'');
          controller.buyService(order,context);
-         Get.offAll(()=>Myorders());
+         Get.close(3);
+         Get.to(()=>Myorders());
       }
       print("key is $key : value is$value");
       //Do something with the result
@@ -191,7 +191,7 @@ class BuyServiceState extends State<BuyService> {
     //Replace with actual values
 
     String orderId = id;
-    String stage = "TEST"; //PROD
+    String stage = Constants.cashFreeOrderStage;
     String orderAmount = serviceModel.price.toString();
     String tokenData = token;
     String customerName = userId;
@@ -200,7 +200,7 @@ class BuyServiceState extends State<BuyService> {
     String appId = remoteConfig.getString('client_id');
     String customerPhone = userPhone;
     String customerEmail = serviceModel.email;
-    String notifyUrl = "https://webhook.site/472fc2d6-eb67-48e8-ab69-15cedd664015";
+    String notifyUrl = Constants.cashFreeNotifyUrl;
 
     Map<String, dynamic> inputParams = {
       "orderId": orderId,
@@ -224,7 +224,8 @@ class BuyServiceState extends State<BuyService> {
         final order=Order(userId,serviceModel.userId,serviceModel.serviceId,userPhone,serviceModel.email,serviceModel.name,DateTime.now().toString(),'in Progress'
             ,0,'',0,'');
         controller.buyService(order,context);
-        Get.offAll(()=>Myorders());
+        Get.close(3);
+        Get.to(()=>Myorders());
       }
       print("key is $key : value is$value");
       //Do something with the result
