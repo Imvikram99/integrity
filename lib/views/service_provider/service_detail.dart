@@ -23,8 +23,6 @@ class ServiceDetailState extends State<ServiceDetail> {
   String orderstatus='';
   late double rating;
 
-  TextEditingController reviewController=TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -91,10 +89,13 @@ class ServiceDetailState extends State<ServiceDetail> {
             SizedBox(height: 4,),
             Text(serviceModel.watsApp),
             SizedBox(height: 10,),
-            Text('Telegram',style: TextStyle(fontSize: Get.textTheme.bodyMedium!.fontSize,fontWeight: FontWeight.bold),
+            Column(
+              children: [
+                Text('Telegram',style: TextStyle(fontSize: Get.textTheme.bodyMedium!.fontSize,fontWeight: FontWeight.bold),),
+                SizedBox(height: 4,),
+                Text(serviceModel.telegram),
+              ],
             ),
-            SizedBox(height: 4,),
-            Text(serviceModel.telegram),
             SizedBox(height: 10,),
             Text('Web Address',style: TextStyle(fontSize: Get.textTheme.bodyMedium!.fontSize,fontWeight: FontWeight.bold),
             ),
@@ -161,179 +162,128 @@ class ServiceDetailState extends State<ServiceDetail> {
                   itemBuilder: (BuildContext context, int index) {
                     final model = controller.orders[index];
                     return Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                          vertical: 4,
-                        ),
-                        padding: EdgeInsets.only(left: 10,right: 10),
-                        decoration: BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(10),
-                            border:Border.all(color: Colors.black87)
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 10,),
-                            Text(model.serviceName,
-                              style: TextStyle(
-                                fontSize: Get.textTheme.headline6!.fontSize,
-                              ),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 4,
+                      ),
+                      padding: EdgeInsets.only(left: 10,right: 10),
+                      decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(10),
+                          border:Border.all(color: Colors.black87)
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 10,),
+                          Text(model.serviceName,
+                            style: TextStyle(
+                              fontSize: Get.textTheme.headline6!.fontSize,
                             ),
-                            SizedBox(height: 10,),
-                            Text(
-                              model.orderDate,
-                              style: TextStyle(
-                                fontSize: Get.textTheme.bodySmall!.fontSize,
-                              ),
+                          ),
+                          SizedBox(height: 10,),
+                          Text(
+                            model.orderDate,
+                            style: TextStyle(
+                              fontSize: Get.textTheme.bodySmall!.fontSize,
                             ),
-                            SizedBox(height: 10,),
-                            Text(
-                              model.buyerPhone,
-                              style: TextStyle(
-                                fontSize: Get.textTheme.bodySmall!.fontSize,
-                              ),
+                          ),
+                          SizedBox(height: 10,),
+                          Text(
+                            model.buyerPhone,
+                            style: TextStyle(
+                              fontSize: Get.textTheme.bodySmall!.fontSize,
                             ),
-                            SizedBox(height: 10,),
-                            Text(
-                              'order status: '+model.orderStatus,
-                              style: TextStyle(
-                                fontSize: Get.textTheme.bodySmall!.fontSize,
-                              ),
+                          ),
+                          SizedBox(height: 10,),
+                          Text(
+                            'order status: '+model.orderStatus,
+                            style: TextStyle(
+                              fontSize: Get.textTheme.bodySmall!.fontSize,
                             ),
-                            SizedBox(height: 10,),
-                            model.orderStatus=='Completed'?
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    RatingBar.builder(
-                                      initialRating: model.buyerRating,
-                                      minRating: 1,
-                                      direction: Axis.horizontal,
-                                      allowHalfRating: true,
-                                      ignoreGestures: true,
-                                      itemCount: 5,
-                                      itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
-                                      itemBuilder: (context, _) => Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
-                                      ),
-                                      onRatingUpdate: (rat) {
-                                        print(rat);
-                                       // rating=rat;
-                                      },
+                          ),
+                          SizedBox(height: 10,),
+                          model.orderStatus=='Completed' && (model.buyerRating>0 && model.serviceRating>0)?
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  RatingBar.builder(
+                                    initialRating: model.buyerRating,
+                                    minRating: 1,
+                                    direction: Axis.horizontal,
+                                    allowHalfRating: true,
+                                    ignoreGestures: true,
+                                    itemCount: 5,
+                                    itemPadding: EdgeInsets.symmetric(horizontal: 2.0),
+                                    itemBuilder: (context, _) => Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
                                     ),
-                                    SizedBox(width: 8,),
-                                    Text(model.buyerRating.toString(),style: TextStyle(fontSize: 20),),
-                                  ],
-                                ),
-                                SizedBox(height: 10,),
-                                Text('" ${model.buyerReview} "',style: TextStyle(fontSize: 18),),
-                                SizedBox(height: 10,),
-                              ],
-                            ):
-                            orderstatus=='Completed'?
-                            Column(
-                              children: [
-                                RatingBar.builder(
-                                  initialRating: 1,
-                                  minRating: 1,
-                                  direction: Axis.horizontal,
-                                  allowHalfRating: true,
-                                  itemCount: 5,
-                                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                  itemBuilder: (context, _) => Icon(
-                                    Icons.star,
-                                    color: Colors.amber,
+                                    onRatingUpdate: (rat) {
+                                      print(rat);
+                                      // rating=rat;
+                                    },
                                   ),
-                                  onRatingUpdate: (rat) {
-                                    print(rat);
-                                    rating=rat;
-                                  },
+                                  SizedBox(width: 8,),
+                                  Text(model.buyerRating.toString(),style: TextStyle(fontSize: 20),),
+                                ],
+                              ),
+                              SizedBox(height: 10,),
+                              Text('" ${model.buyerReview} "',style: TextStyle(fontSize: 18),),
+                              SizedBox(height: 10,),
+                            ],
+                          ):
+                          model.orderStatus=='Completed' && model.serviceRating==0?
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.only(left: 25,right: 25),
+                          child: TextButton(
+                              onPressed: (){
+                                addReview(controller,model);
+                              },
+                              style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green),
+                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15.0),
+                                    )
                                 ),
-                                SizedBox(height: 15,),
-                                TextFormField(
-                                  controller: reviewController,
-                                  style:  TextStyle(color: Colors.black87, fontSize: 16),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please Write down a review';
-                                    }
-                                    return null;
-                                  },
-                                  decoration: InputDecoration(
-                                      enabledBorder: new OutlineInputBorder(
-                                        borderRadius: new BorderRadius.circular(15.0),
-                                        borderSide:  BorderSide(color:  Colors.cyan.shade700 ),
-                                      ),
-                                      focusedBorder: new OutlineInputBorder(
-                                        borderRadius: new BorderRadius.circular(15.0),
-                                        borderSide:  BorderSide(color:  Colors.cyan.shade700 ),
-                                      ),
-                                      filled: true,
-                                      hintStyle: TextStyle(color: Colors.grey.shade500,fontSize: 14),
-                                      hintText: "Write a review",
-                                      fillColor: Colors.grey.shade200),
-                                  maxLines: 3,
-                                  onTap: (){
-
-                                  },
-                                ),
-                                SizedBox(height: 10,),
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  margin: EdgeInsets.only(left: 25,right: 25),
-                                  child:  TextButton(
-                                      onPressed: (){
-                                        if(reviewController.text.isNotEmpty)
-                                          {
-                                            controller.updateOrderStatus(model.orderId,rating,reviewController.text,'Completed');
-                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('Review Submitted Successfully')));
-                                          }
-                                        else
-                                          {
-                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('Please Write a review first')));
-                                          }
-                                      },
-                                      style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green),
-                                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(15.0),
-                                            )
-                                        ),
-                                        padding: MaterialStateProperty.all(EdgeInsets.only(top: 8,bottom: 8,left: 30,right: 30)),
-                                      ),
-                                      child: Text('Submit',style: TextStyle(color: Colors.white),)
-                                  ) ,
-                                )
-                              ],
-                            )
-                            :Container(
-                              width: MediaQuery.of(context).size.width,
-                              margin: EdgeInsets.only(left: 25,right: 25),
-                              child:  TextButton(
-                                  onPressed: (){
-                                    setState(() {
-                                      orderstatus='Completed';
-                                    });
-                                  },
-                                  style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green),
-                                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(15.0),
-                                        )
-                                    ),
-                                    padding: MaterialStateProperty.all(EdgeInsets.only(top: 8,bottom: 8,left: 30,right: 30)),
-                                  ),
-                                  child: Text('Mark Complete',style: TextStyle(color: Colors.white),)
-                              ) ,
+                                padding: MaterialStateProperty.all(EdgeInsets.only(top: 8,bottom: 8,left: 30,right: 30)),
+                              ),
+                              child: Text('Rate this Order',style: TextStyle(color: Colors.white,fontStyle: FontStyle.italic),)
+                          ),):
+                          model.orderStatus=='Completed' && model.buyerRating==0?
+                          Text(
+                            'Waiting for Reviewer Ratings',
+                            style: TextStyle(
+                                fontSize: Get.textTheme.bodySmall!.fontSize,
+                                color: Colors.grey.shade400,
+                                fontStyle: FontStyle.italic
                             ),
-                            SizedBox(height: 10,),
-                          ],
-                        ),
-                      );
+                          ):
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.only(left: 25,right: 25),
+                            child:  TextButton(
+                                onPressed: (){
+                                  controller.markOrderComplete(model.orderId);
+                                },
+                                style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green),
+                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15.0),
+                                      )
+                                  ),
+                                  padding: MaterialStateProperty.all(EdgeInsets.only(top: 8,bottom: 8,left: 30,right: 30)),
+                                ),
+                                child: Text('Mark Complete',style: TextStyle(color: Colors.white),)
+                            ) ,
+                          ),
+                          SizedBox(height: 10,),
+                        ],
+                      ),
+                    );
                   },
                 )
                     :Container();
@@ -342,6 +292,111 @@ class ServiceDetailState extends State<ServiceDetail> {
           ],
         )
       )
+    );
+  }
+
+  Future<void> addReview(ServiceController controller,Order model){
+    TextEditingController reviewController=TextEditingController();
+    final _formKey = GlobalKey<FormState>();
+
+   return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+         return Wrap(
+           children: [
+             Form(
+                 key: _formKey,
+                 child:  Container(
+                   margin: EdgeInsets.all(10),
+                   child:Column(
+                     children: [
+                       SizedBox(height: 10,),
+                       Text(model.serviceName,
+                         style: TextStyle(
+                           fontSize: Get.textTheme.headline6!.fontSize,
+                         ),
+                       ),
+                       SizedBox(height: 10,),
+                       RatingBar.builder(
+                         initialRating: 1,
+                         minRating: 1,
+                         direction: Axis.horizontal,
+                         allowHalfRating: true,
+                         itemCount: 5,
+                         itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                         itemBuilder: (context, _) => Icon(
+                           Icons.star,
+                           color: Colors.amber,
+                         ),
+                         onRatingUpdate: (rat) {
+                           print(rat);
+                           rating=rat;
+                         },
+                       ),
+                       SizedBox(height: 15,),
+                       TextFormField(
+                         controller: reviewController,
+                         style:  TextStyle(color: Colors.black87, fontSize: 16),
+                         validator: (value) {
+                           if (value == null || value.isEmpty) {
+                             return 'Please Write down a review';
+                           }
+                           return null;
+                         },
+                         decoration: InputDecoration(
+                             enabledBorder: new OutlineInputBorder(
+                               borderRadius: new BorderRadius.circular(15.0),
+                               borderSide:  BorderSide(color:  Colors.cyan.shade700 ),
+                             ),
+                             focusedBorder: new OutlineInputBorder(
+                               borderRadius: new BorderRadius.circular(15.0),
+                               borderSide:  BorderSide(color:  Colors.cyan.shade700 ),
+                             ),
+                             errorBorder:new OutlineInputBorder(
+                               borderRadius: new BorderRadius.circular(15.0),
+                               borderSide:  BorderSide(color:  Colors.red ),
+                             ) ,
+                             filled: true,
+                             hintStyle: TextStyle(color: Colors.grey.shade500,fontSize: 14),
+                             hintText: "Write a review",
+                             fillColor: Colors.grey.shade200),
+                         maxLines: 3,
+                         onTap: (){
+
+                         },
+                       ),
+                       SizedBox(height: 10,),
+                       Container(
+                         width: MediaQuery.of(context).size.width,
+                         margin: EdgeInsets.only(left: 25,right: 25),
+                         padding:EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                         child:  TextButton(
+                             onPressed: (){
+                               if(_formKey.currentState!.validate())
+                               {
+                                 controller.addReview(model.orderId, rating, reviewController.text);
+                                 Navigator.pop(context);
+                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('Review Submitted Successfully')));
+                               }
+                             },
+                             style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green),
+                               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                   RoundedRectangleBorder(
+                                     borderRadius: BorderRadius.circular(15.0),
+                                   )
+                               ),
+                               padding: MaterialStateProperty.all(EdgeInsets.only(top: 8,bottom: 8,left: 30,right: 30)),
+                             ),
+                             child: Text('Submit',style: TextStyle(color: Colors.white),)
+                         ) ,
+                       )
+                     ],
+                   ),
+                 ))
+           ],
+         );
+      },
     );
   }
 

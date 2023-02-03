@@ -68,6 +68,7 @@ class ServiceController extends GetxController{
       })
     });
   }
+
   Stream<List<ServiceModel>> serviceStream(String c) {
     return firestore
         .collection('services')
@@ -160,16 +161,24 @@ class ServiceController extends GetxController{
         final service =Order.fromDocumentSnapshot(documentSnapshot: doc);
         services.add(service);
       }
+      services.sort((a,b)=>b.orderDate.compareTo(a.orderDate));
       return services;
     });
   }
+  markOrderComplete(String orderId)
+  {
+    firestore.collection('orders').doc(orderId).update(
+        {
+          'orderStatus':'Completed'
+        });
+  }
 
-  updateOrderStatus(orderId,rating,review,status){
+  addReview(orderId,rating,review){
     firestore.collection('orders').doc(orderId).update(
         {
           'serviceRating':rating,
           'serviceReview':review,
-          'orderStatus':status
+         // 'orderStatus':status
         });
   }
 
