@@ -1,15 +1,14 @@
 import 'package:expandable/expandable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:integrity/constants.dart';
 import 'package:integrity/screens/login_page.dart';
 import 'package:integrity/views/reviewer/profile.dart';
-import 'package:integrity/views/service_provider/profile.dart';
 import 'package:integrity/views/reviewer/my_orders.dart';
 import 'package:integrity/views/reviewer/service_detail.dart';
-
 import '../../controllers/category_controller.dart';
 import '../../controllers/serviceController.dart';
 import '../../models/serviceModel.dart';
@@ -38,6 +37,24 @@ class Reviewer__Home_PageState extends State<Reviewer_Home_Page> {
     if(box!=null)
     {
       userId= box.read('id');
+    }
+    retrieveDynamicLink(context);
+  }
+
+  Future<void> retrieveDynamicLink(BuildContext context) async {
+    try {
+      final PendingDynamicLinkData? data = await FirebaseDynamicLinks.instance.getInitialLink();
+      final Uri? deepLink = data?.link;
+
+      if (deepLink != null) {
+        if (deepLink.queryParameters.containsKey('serviceid')) {
+          String id = deepLink.queryParameters['serviceid']!;
+          String id2 = deepLink.queryParameters['userid']!;
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) =>ServiceDetail(serviceId:id,userId:id2)));
+        }
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 
@@ -170,7 +187,7 @@ class Reviewer__Home_PageState extends State<Reviewer_Home_Page> {
             Expanded(flex:1,child: Icon(Icons.home_outlined,color: Colors.blue,)),
             Expanded(flex:5,child: InkWell(child:Text(controller.categories[index].name),
               onTap: (){
-                Get.to(()=>ServicesList(),arguments: controller.categories[index].name);
+                Get.to(()=>ServicesList(),arguments: controller.categories[index]);
               },)),
           ],
         ),

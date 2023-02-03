@@ -9,6 +9,7 @@ import 'package:integrity/screens/first_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:integrity/screens/login_page.dart';
 import 'package:integrity/views/reviewer/reviewer_home_page.dart';
+import 'package:integrity/views/reviewer/service_detail.dart';
 import 'package:integrity/views/service_provider/service_home_page.dart';
 import 'package:is_first_run/is_first_run.dart';
 
@@ -29,7 +30,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -49,11 +50,10 @@ class Home extends StatefulWidget{
 }
 
 class HomePage extends State<Home>{
-  late bool firstRun;
 
+  late bool firstRun;
   final box=GetStorage();
   String? userId;
-
   @override
   void initState() {
     // TODO: implement initState

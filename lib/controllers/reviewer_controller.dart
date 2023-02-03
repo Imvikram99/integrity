@@ -38,6 +38,7 @@ class ReviewerController extends GetxController{
         final order =Order.fromDocumentSnapshot(documentSnapshot: doc);
         orders.add(order);
       }
+      orders.sort((a, b) => b.orderDate.compareTo(a.orderDate));
       return orders;
     });
   }
@@ -65,12 +66,13 @@ class ReviewerController extends GetxController{
         await  firestore.collection('services').doc(serviceId).get().then((value) async{
             double or=value.data()!['totalOrders'].toDouble();
             double ra=value.data()!['averageRating'].toDouble();
+            double tr=ra*or;
             double to=or+1;
-            double tr=ra+rating;
-            double ave=tr/to;
+            double t=tr+rating;
+            double ave=t/to;
           await  firestore.collection('services').doc(serviceId).update({
               'totalOrders':to,
-              'averageRating':ave
+              'averageRating':double.parse(ave.toStringAsFixed(2))
             });
 
           });

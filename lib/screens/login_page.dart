@@ -190,7 +190,7 @@ class _LogIn_pageState extends State<LogIn_page> {
                           setState(() {
                             modal=true;
                           });
-await  _fireStore.collection('users') .where('phone', isEqualTo:countryCode+ PhoneController.text,)
+           await  _fireStore.collection('users') .where('phone', isEqualTo:countryCode+ PhoneController.text,)
           .get()
           .then((value) async { if(value.size > 0 ){
             if(value.size == 1 ){
