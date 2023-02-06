@@ -41,10 +41,20 @@ class ReviewerProfileState extends State<ReviewerProfile> {
                   child: CircularProgressIndicator(),
                 );
               }
+              String walletAmount=snapshot.data!.docs.first['walletAmount']??'';
               return Container(
                 margin: EdgeInsets.only(left: 15,right: 15,top: 20),
                 child:Column(
                   children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.wallet,size: 40,),
+                        Text(' : '),
+                        Text(walletAmount,style: TextStyle(fontSize: 18),)
+                      ],
+                    ),
+                    SizedBox(height: 15,),
                     TextFormField(
                       initialValue: snapshot.data!.docs.first['phone'],
                       readOnly: true,

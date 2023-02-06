@@ -196,4 +196,15 @@ class ServiceController extends GetxController{
   {
     firestore.collection('services').doc(id).set(model.toJson()).onError((error, stackTrace) => print('error='+error.toString()));
   }
+
+  giveUserCommission(String userId,String amount){
+   firestore.collection('users').where('userid',isEqualTo: userId).get().then((value){
+     for(var data in value.docs)
+     {
+       firestore.collection('users').doc(data.id).update({
+         'walletAmount':amount
+       });
+     }
+   });
+  }
 }
