@@ -31,7 +31,7 @@ class ReviewerEditProfileState extends State<ReviewerEditProfile> {
     userId=Get.arguments[0];
     nameController.text=Get.arguments[1];
     ageController.text=Get.arguments[2];
-    dropdownvalue=Get.arguments[3];
+    dropdownvalue=Get.arguments[3]==''?items[0]:Get.arguments[3];
   }
   @override
   Widget build(BuildContext context) {

@@ -153,8 +153,10 @@ class Provider__Home_PageState extends State<Provider_Home_Page> {
                             },
                           );
                         },
-                      )
-                          :Center(child: CircularProgressIndicator(),);
+                      ):
+                      controller.myServices.length==0?
+                      Center(child: Text('You have not created any service yet',style: TextStyle(color: Colors.grey,fontStyle: FontStyle.italic),),):
+                      Center(child: CircularProgressIndicator(),);
                     },
                   )
                ),
