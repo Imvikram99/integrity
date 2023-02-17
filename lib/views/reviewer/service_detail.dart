@@ -32,6 +32,7 @@ class ServiceDetailState extends State<ServiceDetail> {
   late String deepLinkUserId;
   late double currentLat=0;
   late double currentLang=0;
+  double roundDistanceInKM=0;
 
 
   @override
@@ -45,17 +46,17 @@ class ServiceDetailState extends State<ServiceDetail> {
     else
       {
         deeplink=true;
-        box.write('deepLinkId', widget.userId);
+      //  box.write('deepLinkId', widget.userId);
         deepLinkUserId=widget.userId!;
       }
-    if(box!=null)
-    {
-      userId= box.read('id');
-      if(box.read('deepLinkId')!=null)
-        {
-          deepLinkUserId=box.read('deepLinkId');
-        }
-    }
+    // if(box!=null)
+    // {
+    //   userId= box.read('id');
+    //   if(box.read('deepLinkId')!=null)
+    //     {
+    //       deepLinkUserId=box.read('deepLinkId');
+    //     }
+    // }
     getCurrentLoc();
   }
 
@@ -67,9 +68,11 @@ class ServiceDetailState extends State<ServiceDetail> {
 
   @override
   Widget build(BuildContext context) {
-    double dista=Geolocator.distanceBetween(currentLat, currentLang,double.parse( serviceModel.longitude),double.parse(serviceModel.longitude));
-    double distanceInKiloMeters = dista/ 1000;
-    double roundDistanceInKM = double.parse((distanceInKiloMeters).toStringAsFixed(2));
+   if(!deeplink){
+     double dista=Geolocator.distanceBetween(currentLat, currentLang,double.parse( serviceModel.longitude),double.parse(serviceModel.longitude));
+     double distanceInKiloMeters = dista/ 1000;
+     roundDistanceInKM= double.parse((distanceInKiloMeters).toStringAsFixed(2));
+   }
     return Scaffold(
       appBar:AppBar(
         title:Text(''),
@@ -269,7 +272,7 @@ class ServiceDetailState extends State<ServiceDetail> {
                   ),
                   SizedBox(height: 15,),
                   TextButton(onPressed: (){
-                    Get.to(()=>BuyService(),arguments: serviceModel);
+                    Get.to(()=>BuyService(),arguments:[serviceModel,deepLinkUserId]);
                   },
                       style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Constants.appButtonColor),
                         shape: MaterialStateProperty.all<RoundedRectangleBorder>(

@@ -27,10 +27,15 @@ class BuyServiceState extends State<BuyService> {
   late String userId;
   late ServiceModel serviceModel;
   late String userPhone;
+  late String deepLinkid;
 
   @override
   void initState() {
-    serviceModel=Get.arguments;
+    serviceModel=Get.arguments[0];
+    if(Get.arguments[1]!=null)
+      {
+        deepLinkid=Get.arguments[1];
+      }
     if(box!=null)
     {
       userId= box.read('id');
@@ -39,6 +44,7 @@ class BuyServiceState extends State<BuyService> {
         for(var data in value.docs)
           {
             userPhone=data.data()['phone'],
+            print(data.id)
           }
       });
     }
@@ -179,6 +185,11 @@ class BuyServiceState extends State<BuyService> {
          final order=Order(userId,serviceModel.userId,serviceModel.serviceId,userPhone,serviceModel.email,serviceModel.name,DateTime.now().toString(),'in Progress'
              ,0,'',0,'');
          controller.buyService(order,context);
+         if(deepLinkid!=null)
+           {
+             double commission=(double.parse(serviceModel.price)*10)/100;
+             controller.giveUserCommission(deepLinkid, commission.toString());
+           }
          Get.close(3);
          Get.to(()=>Myorders());
       }
@@ -224,6 +235,11 @@ class BuyServiceState extends State<BuyService> {
         final order=Order(userId,serviceModel.userId,serviceModel.serviceId,userPhone,serviceModel.email,serviceModel.name,DateTime.now().toString(),'in Progress'
             ,0,'',0,'');
         controller.buyService(order,context);
+        if(deepLinkid!=null)
+        {
+          double commission=(double.parse(serviceModel.price)*10)/100;
+          controller.giveUserCommission(deepLinkid, commission.toString());
+        }
         Get.close(3);
         Get.to(()=>Myorders());
       }

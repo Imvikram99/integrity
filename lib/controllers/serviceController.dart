@@ -79,7 +79,6 @@ class ServiceController extends GetxController{
       List<ServiceModel> services = [];
       for (var doc in query.docs) {
         final service =ServiceModel.fromDocumentSnapshot(documentSnapshot: doc);
-      //  TodoModel.fromDocumentSnapshot(documentSnapshot: todo);
         services.add(service);
       }
       return services;
@@ -128,23 +127,6 @@ class ServiceController extends GetxController{
       Get.back()
     }
     );
-  /* await firestore.collection('services').doc(order.serviceId).collection('orders').add(order.toJson()).then((ordr) => {
-          firestore.collection('users').where('userid',isEqualTo: order.userId).get().then((value) =>
-          {
-           // print(value.docs.first.id)
-            firestore.collection('users').doc(value.docs.first.id).collection('orders').doc(ordr.id).set(order.toJson()).then((value) => {
-                //  print(value.id),
-                  Loader.hide(),
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Order placed successfully '),),),
-                  Get.back()
-            })
-          }),
-       })
-   .catchError((error) => {
-      Loader.hide(),
-     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error),),),
-    });*/
-
   }
 
   getServiceOrders(String id)
@@ -195,5 +177,16 @@ class ServiceController extends GetxController{
   updateService(ServiceModel model,String id)
   {
     firestore.collection('services').doc(id).set(model.toJson()).onError((error, stackTrace) => print('error='+error.toString()));
+  }
+
+  giveUserCommission(String userId,String amount){
+   firestore.collection('users').where('userid',isEqualTo: userId).get().then((value){
+     for(var data in value.docs)
+     {
+       firestore.collection('users').doc(data.id).update({
+         'walletAmount':amount
+       });
+     }
+   });
   }
 }

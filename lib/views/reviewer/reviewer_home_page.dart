@@ -173,8 +173,10 @@ class Reviewer__Home_PageState extends State<Reviewer_Home_Page> {
             itemCount: cController.categories.length,
             itemBuilder: (BuildContext context, int index){
               return categoryItem(cController,index);
-            })
-            :Center(child: CircularProgressIndicator(),);
+            }):
+        cController.categories.length==0?
+        Center(child: Text('No categories available',style: TextStyle(color: Colors.grey,fontStyle: FontStyle.italic),),):
+        Center(child: CircularProgressIndicator(),);
       },
     );
   }

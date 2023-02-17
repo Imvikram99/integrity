@@ -135,8 +135,10 @@ class MyordersState extends State<Myorders> {
                   ),
                 );
               },
-            )
-                :Center(child: Text('No Orders Yet',),);
+            ):
+            controller.orders.length==0?
+            Center(child: Text('No Orders Yet',),):
+            Center(child: CircularProgressIndicator(),);
           },
         ) ,
       ),

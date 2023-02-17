@@ -97,6 +97,10 @@ var bytes = utf8.encode(PasswordController.text); // data being hashed
        "userCountry":widget.country,
        "password":digest.toString(),
        "usertype":widget.userType,
+       "userAge":'',
+       "userName":'',
+       "userGender":'',
+       "walletAmount":'0.0'
      }).then((value) => {
        if(value.id.length > 0)
          Navigator.pushReplacement(

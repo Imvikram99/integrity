@@ -32,7 +32,7 @@ class ProviderEditProfileState extends State<ProviderEditProfile> {
     userId=Get.arguments[0];
     nameController.text=Get.arguments[1];
     ageController.text=Get.arguments[2];
-    dropdownvalue=Get.arguments[3];
+    dropdownvalue=Get.arguments[3]==''?items[0]:Get.arguments[3];
   }
   @override
   Widget build(BuildContext context) {
@@ -137,18 +137,20 @@ class ProviderEditProfileState extends State<ProviderEditProfile> {
                           padding: EdgeInsets.only(bottom:20),
                           child:TextButton(
                               onPressed: (){
-                                firestore.collection('users').doc(userId).update(
-                                    {
-                                      'userName':nameController.text,
-                                      'userAge':ageController.text,
-                                      'userGender':dropdownvalue
-                                    }).whenComplete(() => {
-                                  Fluttertoast.showToast(
-                                    msg: 'profile data updated',
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM,
-                                  ),
-                                  Get.offAll(Provider_Home_Page())
+                                firestore.collection('users').where('userid',isEqualTo: userId).get().then((value){
+                                  firestore.collection('users').doc(value.docs.first.id).update(
+                                      {
+                                        'userName':nameController.text,
+                                        'userAge':ageController.text,
+                                        'userGender':dropdownvalue
+                                      }).whenComplete(() => {
+                                    Fluttertoast.showToast(
+                                      msg: 'profile data updated',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                    ),
+                                    Get.offAll(Provider_Home_Page())
+                                  });
                                 });
                               },
                               style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Constants.appButtonColor),
