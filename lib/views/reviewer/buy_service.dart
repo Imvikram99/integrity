@@ -31,8 +31,8 @@ class BuyServiceState extends State<BuyService> {
 
   @override
   void initState() {
-    serviceModel=Get.arguments[0];
-    if(Get.arguments[1]!=null)
+      serviceModel=Get.arguments[0];
+      if(Get.arguments[1]!=null)
       {
         deepLinkid=Get.arguments[1];
       }

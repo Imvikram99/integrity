@@ -492,7 +492,7 @@ class ServiceDetailState extends State<ServiceDetail> {
             ),
             SizedBox(height: 15,),
             TextButton(onPressed: (){
-              Get.to(()=>BuyService(),arguments: serviceModel);
+              Get.to(()=>BuyService(),arguments:[serviceModel,null]);
             },
              style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Constants.appButtonColor),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(

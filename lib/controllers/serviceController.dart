@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,7 +7,6 @@ import 'package:get/state_manager.dart';
 import 'package:integrity/models/Order.dart';
 import 'package:integrity/models/serviceModel.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
-
 
 class ServiceController extends GetxController{
   FirebaseFirestore firestore=FirebaseFirestore.instance;
@@ -17,9 +17,9 @@ class ServiceController extends GetxController{
   var s=<ServiceModel>[].obs;
   Rx<List<Order>> ordersList = Rx<List<Order>>([]);
   List<Order> get orders => ordersList.value;
-
   Rx<List<ServiceModel>> myServiceList = Rx<List<ServiceModel>>([]);
   List<ServiceModel> get myServices => myServiceList.value;
+
   @override
   void onReady() {
 
@@ -86,6 +86,7 @@ class ServiceController extends GetxController{
   }
 
   Stream<List<ServiceModel>> allServiceStream() {
+    
     return firestore
         .collection('services')
         .snapshots()
