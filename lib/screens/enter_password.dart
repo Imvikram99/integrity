@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:fancy_password_field/fancy_password_field.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 // import 'package:integrity/screens/reviewer/success_register.dart';
 import 'package:integrity/screens/success_register.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -87,6 +88,7 @@ var bytes = utf8.encode(PasswordController.text); // data being hashed
  
   void setPassword()async{
 // _fireStore.collection('users').add();
+    final box = GetStorage();
  var bytes = utf8.encode(PasswordController.text.toString()); // data being hashed
 
    var digest = sha256.convert(bytes);
@@ -102,13 +104,15 @@ var bytes = utf8.encode(PasswordController.text); // data being hashed
        "userGender":'',
        "walletAmount":'0.0'
      }).then((value) => {
-       if(value.id.length > 0)
-         Navigator.pushReplacement(
-         context,
-         MaterialPageRoute(builder: (context) => Success(
-         userType:widget.userType,
-         isRecovering: widget.isRecovering?true:false,
-         )))
+       if(value.id.length > 0){
+       box.write('id',widget.userId),
+       Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Success(
+          userType:widget.userType,
+          isRecovering: widget.isRecovering?true:false,
+        )))
+       }
    }).onError((error, stackTrace) => {
    });
 
