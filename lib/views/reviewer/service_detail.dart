@@ -30,9 +30,9 @@ class ServiceDetailState extends State<ServiceDetail> {
   final box = GetStorage();
   late String userId;
   late String deepLinkUserId;
-  late double currentLat=0;
-  late double currentLang=0;
-  double roundDistanceInKM=0;
+  late double currentLat;
+  late double currentLang;
+  late double roundDistanceInKM=0;
 
 
   @override
@@ -49,30 +49,50 @@ class ServiceDetailState extends State<ServiceDetail> {
       //  box.write('deepLinkId', widget.userId);
         deepLinkUserId=widget.userId!;
       }
-    // if(box!=null)
-    // {
-    //   userId= box.read('id');
-    //   if(box.read('deepLinkId')!=null)
-    //     {
-    //       deepLinkUserId=box.read('deepLinkId');
-    //     }
-    // }
-    getCurrentLoc();
+    if(!deeplink)
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await this.getCurrentLoc();
+      setState(() { });
+    });
   }
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
 
-  getCurrentLoc() async{
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location services are disabled. Please enable the services')));
+      return false;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permissions are denied')));
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location permissions are permanently denied, we cannot request permissions.')));
+      return false;
+    }
+    return true;
+  }
+  Future<void> getCurrentLoc() async{
+    _handleLocationPermission();
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    currentLat=position.latitude;
-    currentLang=position.longitude;
+    double dista=Geolocator.distanceBetween(position.latitude, position.longitude,double.parse(serviceModel.latitude),double.parse(serviceModel.longitude));
+    double distanceInKiloMeters = dista/ 1000;
+    roundDistanceInKM= double.parse((distanceInKiloMeters).toStringAsFixed(0));
   }
 
   @override
   Widget build(BuildContext context) {
-   if(!deeplink){
-     double dista=Geolocator.distanceBetween(currentLat, currentLang,double.parse( serviceModel.longitude),double.parse(serviceModel.longitude));
-     double distanceInKiloMeters = dista/ 1000;
-     roundDistanceInKM= double.parse((distanceInKiloMeters).toStringAsFixed(2));
-   }
     return Scaffold(
       appBar:AppBar(
         title:Text(''),
